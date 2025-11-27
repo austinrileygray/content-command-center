@@ -10,6 +10,14 @@ import { useAppStore } from "@/stores/app-store"
 import { ContentIdea } from "@/types/database"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { exportIdeasToCSV, exportIdeasToJSON } from "@/lib/export"
+import { Download } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 interface IdeasPageClientProps {
   initialIdeas: ContentIdea[]
@@ -80,6 +88,22 @@ export function IdeasPageClient({ initialIdeas }: IdeasPageClientProps) {
               <Sparkles className="w-4 h-4" />
               Generate Ideas
             </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2">
+                  <Download className="w-4 h-4" />
+                  Export
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={() => exportIdeasToCSV(filteredIdeas)}>
+                  Export as CSV
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => exportIdeasToJSON(filteredIdeas)}>
+                  Export as JSON
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <Button className="gap-2 bg-brand hover:bg-brand/90" onClick={handleNew}>
               <Plus className="w-4 h-4" />
               New Idea
