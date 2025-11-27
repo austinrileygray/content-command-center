@@ -263,7 +263,7 @@ export function AssetsClient({ initialAssets }: AssetsClientProps) {
     }
   }
 
-  const platforms = Array.from(new Set(assets.map(a => a.platform).filter(Boolean)))
+  const platforms = Array.from(new Set(assets.map(a => a.platform).filter((p): p is string => Boolean(p))))
 
   return (
     <div className="space-y-6">
