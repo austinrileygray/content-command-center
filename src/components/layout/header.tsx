@@ -7,9 +7,24 @@ import { UserMenu } from "./user-menu"
 import { ThemeToggle } from "./theme-toggle"
 import Link from "next/link"
 import { useAppStore } from "@/stores/app-store"
+import { debounce } from "@/lib/performance"
+import { useCallback, useState, useEffect } from "react"
 
 export function Header() {
   const { searchQuery, setSearchQuery } = useAppStore()
+  const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery)
+
+  // Debounced search update
+  const debouncedSetSearch = useCallback(
+    debounce((value: string) => {
+      setSearchQuery(value)
+    }, 300),
+    [setSearchQuery]
+  )
+
+  useEffect(() => {
+    debouncedSetSearch(localSearchQuery)
+  }, [localSearchQuery, debouncedSetSearch])
 
   return (
     <header className="h-16 bg-card border-b border-border px-6 flex items-center justify-between">
@@ -20,8 +35,14 @@ export function Header() {
           <Input
             placeholder="Search ideas, assets... (⌘K)"
             className="pl-10 bg-secondary border-border"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={localSearchQuery}
+            onChange={(e) => setLocalSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                setLocalSearchQuery("")
+                setSearchQuery("")
+              }
+            }}
             onFocus={(e) => {
               // Open command palette on focus with Cmd+K hint
               if (e.target.value === "") {

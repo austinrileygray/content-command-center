@@ -22,6 +22,7 @@ import {
   Plus,
   Search,
   Radio,
+  Users,
 } from "lucide-react"
 
 const commands = [
@@ -43,6 +44,7 @@ const commands = [
     items: [
       { id: "new-idea", label: "New Idea", icon: Plus, href: "/ideas?new=true", shortcut: "⌘N" },
       { id: "search", label: "Search", icon: Search, href: "#", shortcut: "⌘K" },
+      { id: "guests", label: "Go to Guests", icon: Users, href: "/guests", shortcut: "⌘K G" },
     ],
   },
 ]
@@ -56,6 +58,15 @@ export function CommandPalette() {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault()
         setOpen((open) => !open)
+      }
+      // Additional shortcuts
+      if (e.key === "n" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault()
+        router.push("/ideas?new=true")
+      }
+      if (e.key === "," && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault()
+        router.push("/settings")
       }
     }
 
