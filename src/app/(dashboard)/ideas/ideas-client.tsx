@@ -142,10 +142,7 @@ export function IdeasPageClient({ initialIdeas }: IdeasPageClientProps) {
         description="Manage your content pipeline"
         actions={
           <>
-            <Button variant="outline" className="gap-2">
-              <Sparkles className="w-4 h-4" />
-              Generate Ideas
-            </Button>
+          <AIIdeaGenerator />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="gap-2">

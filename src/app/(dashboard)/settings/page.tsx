@@ -238,18 +238,45 @@ export default function SettingsPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="zapier-webhook">Zapier Webhook URL</Label>
+                <Label htmlFor="openai-key">OpenAI API Key (Optional)</Label>
+                <Input
+                  id="openai-key"
+                  type="password"
+                  placeholder="sk-..."
+                />
+                <p className="text-xs text-muted-foreground">
+                  For AI-powered idea generation and content creation. Get from <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-brand hover:underline">OpenAI Platform</a>
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="anthropic-key">Anthropic (Claude) API Key (Optional)</Label>
+                <Input
+                  id="anthropic-key"
+                  type="password"
+                  placeholder="sk-ant-..."
+                />
+                <p className="text-xs text-muted-foreground">
+                  Alternative to OpenAI for AI-powered features. Get from <a href="https://console.anthropic.com/" target="_blank" rel="noopener noreferrer" className="text-brand hover:underline">Anthropic Console</a>
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="zapier-webhook">Zapier Webhook URL (Optional)</Label>
                 <Input
                   id="zapier-webhook"
                   type="url"
                   placeholder="https://hooks.zapier.com/..."
                 />
                 <p className="text-xs text-muted-foreground">
-                  For automation triggers
+                  For automation triggers. Create a Zap in Zapier and copy the webhook URL.
                 </p>
               </div>
 
               <Button className="bg-brand hover:bg-brand/90">Save Settings</Button>
+              <p className="text-xs text-muted-foreground">
+                Note: API keys are stored securely. They are used only for the features you enable.
+              </p>
             </div>
           </Card>
         </TabsContent>
