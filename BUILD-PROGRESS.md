@@ -50,7 +50,7 @@
 
 ## 🚀 DEPLOYMENT STATUS
 
-**Production URL:** https://content-command-center-672aigt1k-austins-projects-c461c44a.vercel.app
+**Production URL:** https://content-command-center-i25eyef3z-austins-projects-c461c44a.vercel.app
 
 **Environment Variables:** ✅ Configured in Vercel
 - NEXT_PUBLIC_SUPABASE_URL

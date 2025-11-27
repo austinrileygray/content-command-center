@@ -141,7 +141,7 @@ All buildable features are now complete! The following features require external
 
 The application is **fully functional** and ready for production deployment. All buildable features are complete. External API integrations can be added incrementally as credentials become available.
 
-**Production URL:** https://content-command-center-672aigt1k-austins-projects-c461c44a.vercel.app
+**Production URL:** https://content-command-center-i25eyef3z-austins-projects-c461c44a.vercel.app
 
 ---
 
