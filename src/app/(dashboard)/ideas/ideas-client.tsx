@@ -18,6 +18,7 @@ import { exportIdeasToCSV, exportIdeasToJSON } from "@/lib/export"
 import { Download } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
+import { AIIdeaGenerator } from "@/components/ideas/ai-idea-generator"
 import {
   DropdownMenu,
   DropdownMenuContent,
