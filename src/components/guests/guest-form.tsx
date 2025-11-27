@@ -33,7 +33,7 @@ const guestSchema = z.object({
   email: z.string().email("Invalid email address").optional().or(z.literal("")),
   company: z.string().optional(),
   title: z.string().optional(),
-  bio: z.string().optional(),
+  notes: z.string().optional(),
   linkedin_url: z.string().url("Invalid URL").optional().or(z.literal("")),
   twitter_handle: z.string().optional(),
   status: z.enum(["prospect", "contacted", "confirmed", "declined"]),
@@ -70,7 +70,7 @@ export function GuestForm({ open, onOpenChange, guest }: GuestFormProps) {
       email: guest?.email || "",
       company: guest?.company || "",
       title: guest?.title || "",
-      bio: guest?.bio || "",
+      notes: guest?.notes || "",
       linkedin_url: guest?.linkedin_url || "",
       twitter_handle: guest?.twitter_handle || "",
       status: guest?.status || "prospect",
@@ -95,7 +95,7 @@ export function GuestForm({ open, onOpenChange, guest }: GuestFormProps) {
         email: "",
         company: "",
         title: "",
-        bio: "",
+        notes: "",
         linkedin_url: "",
         twitter_handle: "",
         status: "prospect",
@@ -227,13 +227,13 @@ export function GuestForm({ open, onOpenChange, guest }: GuestFormProps) {
 
             <FormField
               control={form.control}
-              name="bio"
+              name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Bio / Notes</FormLabel>
+                  <FormLabel>Notes</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Brief bio or background..."
+                      placeholder="Notes about this guest..."
                       className="min-h-[100px]"
                       {...field}
                     />
