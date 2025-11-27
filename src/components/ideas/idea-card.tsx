@@ -30,7 +30,9 @@ export function IdeaCard({ idea }: IdeaCardProps) {
           </Badge>
           <div className="flex items-center gap-2">
             {idea.submagic_project_id && (
-              <Scissors className="w-3 h-3 text-brand" title="Clips generating" />
+              <span title="Clips generating">
+                <Scissors className="w-3 h-3 text-brand" />
+              </span>
             )}
             {idea.confidence_score && (
               <span className="text-xs text-muted-foreground">
