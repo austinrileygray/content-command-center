@@ -11,7 +11,7 @@ import { ContentIdea } from "@/types/database"
 import { IdeaForm } from "@/components/ideas/idea-form"
 import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
-import { Edit, Trash2, ArrowRight, Calendar, Clock, Video, Users, Radio, Scissors, Sparkles, Package, ExternalLink, TrendingUp } from "lucide-react"
+import { Edit, Trash2, ArrowRight, Calendar, Clock, Video, Users, Radio, Scissors, Sparkles, Package, ExternalLink, TrendingUp, Play } from "lucide-react"
 import { CONTENT_STATUSES, SUBMAGIC_TEMPLATES } from "@/lib/constants"
 import {
   DropdownMenu,
