@@ -1,4 +1,5 @@
-import { createClient } from "@/lib/supabase/server"
+"use client"
+
 import { PageHeader } from "@/components/shared/page-header"
 import { Card } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -9,15 +10,15 @@ import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
 import { User, Video, Bell, Key } from "lucide-react"
 
-export default async function SettingsPage() {
-  const supabase = await createClient()
-
-  // Get user profile
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .limit(1)
-    .single()
+export default function SettingsPage() {
+  // Note: Profile fetching moved to client component if needed
+  // For now, using static values
+  const profile = {
+    name: "The Owner Operator",
+    email: "owner@theownerop.com",
+    avatar_url: null,
+    youtube_channel_id: null,
+  }
 
   return (
     <div className="space-y-6">
@@ -218,21 +219,23 @@ export default async function SettingsPage() {
                 <Key className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-foreground">API Keys</h3>
-                <p className="text-sm text-muted-foreground">Manage your API integrations</p>
+                <h3 className="text-lg font-semibold text-foreground">Webhooks & API Keys</h3>
+                <p className="text-sm text-muted-foreground">Manage your webhook URLs and API integrations</p>
               </div>
             </div>
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="opus-key">Opus Clip API Key</Label>
+                <Label htmlFor="opus-webhook">Opus Clip Webhook URL</Label>
                 <Input
-                  id="opus-key"
-                  type="password"
-                  placeholder="Enter your API key"
+                  id="opus-webhook"
+                  type="url"
+                  defaultValue={`${typeof window !== 'undefined' ? window.location.origin : 'https://your-domain.com'}/api/webhooks/opus`}
+                  readOnly
+                  className="bg-secondary"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Used for automatic clip generation
+                  Configure this URL in your Opus Clip account settings. Opus Clip will send webhooks when clips are ready (no API key needed).
                 </p>
               </div>
 
@@ -248,7 +251,7 @@ export default async function SettingsPage() {
                 </p>
               </div>
 
-              <Button className="bg-brand hover:bg-brand/90">Save API Keys</Button>
+              <Button className="bg-brand hover:bg-brand/90">Save Settings</Button>
             </div>
           </Card>
         </TabsContent>

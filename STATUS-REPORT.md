@@ -57,7 +57,7 @@
 ## 🔒 BLOCKED ITEMS (Require Credentials/API Keys)
 
 ### External API Integrations
-- ⏳ **Opus Clip API** - Needs API key for clip generation
+- ✅ **Opus Clip** - Webhook integration ready (no API key needed, just configure webhook URL)
 - ⏳ **YouTube API** - Needs OAuth for publishing
 - ⏳ **LinkedIn API** - Needs OAuth for publishing
 - ⏳ **Twitter/X API** - Needs OAuth for publishing
