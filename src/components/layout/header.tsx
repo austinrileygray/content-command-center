@@ -3,9 +3,13 @@
 import { Bell, Search, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { UserMenu } from "./user-menu"
 import Link from "next/link"
+import { useAppStore } from "@/stores/app-store"
 
 export function Header() {
+  const { searchQuery, setSearchQuery } = useAppStore()
+
   return (
     <header className="h-16 bg-card border-b border-border px-6 flex items-center justify-between">
       {/* Search */}
@@ -15,6 +19,8 @@ export function Header() {
           <Input
             placeholder="Search ideas, assets..."
             className="pl-10 bg-secondary border-border"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
       </div>
@@ -33,9 +39,7 @@ export function Header() {
           <span className="absolute top-1 right-1 w-2 h-2 bg-brand rounded-full" />
         </Button>
 
-        <div className="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-white text-sm font-medium">
-          O
-        </div>
+        <UserMenu />
       </div>
     </header>
   )
