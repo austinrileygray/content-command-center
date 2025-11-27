@@ -33,3 +33,12 @@ export const RECORDING_PLATFORMS = {
     url: "https://app.restream.io/studio",
   },
 } as const
+
+// Submagic caption templates (popular ones)
+export const SUBMAGIC_TEMPLATES = [
+  { value: "Hormozi 1", label: "Hormozi Style 1", description: "Bold, high-contrast captions" },
+  { value: "Hormozi 2", label: "Hormozi Style 2", description: "Clean professional look" },
+  { value: "Beast", label: "MrBeast Style", description: "Energetic, colorful captions" },
+  { value: "Ali", label: "Ali Abdaal Style", description: "Minimal, educational look" },
+  { value: "Sara", label: "Sara (Default)", description: "Balanced, versatile style" },
+] as const

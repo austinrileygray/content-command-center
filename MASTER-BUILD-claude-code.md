@@ -5,10 +5,11 @@
 
 ## WHAT TO BUILD
 
-A Next.js dashboard for managing AI-powered content production. User records video → system automatically edits, generates clips, and publishes everywhere.
+A Next.js dashboard for managing AI-powered content production. User records video → system automatically edits, generates clips via **Submagic**, and publishes everywhere.
 
 **Stack:** Next.js 14 (App Router), TypeScript, Tailwind, shadcn/ui, Supabase
 **Design:** Dark theme (Stripe-style), brand color #f15e13 (orange)
+**Clipping Engine:** Submagic API (Magic Clips for auto-generating viral shorts)
 
 ---
 
@@ -39,6 +40,9 @@ NEXT_PUBLIC_SUPABASE_URL=https://sfwslpahuxcofwnyoukg.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmd3NscGFodXhjb2Z3bnlvdWtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQyNzQyMzIsImV4cCI6MjA3OTg1MDIzMn0.o7dgmKv7MnSx56FuW1nWWZAEvPHVa_nabol_3w6Yspo
 SUPABASE_SERVICE_ROLE_KEY=sb_secret_zYWIK8C7YFRQ_7UQ-uBsFw_in-utksh
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# Submagic API (get from https://app.submagic.co → Settings → API)
+SUBMAGIC_API_KEY=sk-your-submagic-api-key-here
 ```
 
 ---
@@ -69,7 +73,7 @@ src/
 │   │   ├── record/
 │   │   │   └── page.tsx                # Recording launcher
 │   │   ├── assets/
-│   │   │   └── page.tsx                # Generated assets
+│   │   │   └── page.tsx                # Generated assets (clips from Submagic)
 │   │   ├── publish/
 │   │   │   └── page.tsx                # Publishing queue
 │   │   ├── analytics/
@@ -77,10 +81,12 @@ src/
 │   │   └── settings/
 │   │       └── page.tsx                # Settings
 │   ├── api/
-│   │   └── webhooks/
-│   │       ├── squadcast/route.ts      # SquadCast webhook
-│   │       ├── loom/route.ts           # Loom webhook
-│   │       └── opus/route.ts           # Opus Clip webhook
+│   │   ├── webhooks/
+│   │   │   ├── squadcast/route.ts      # SquadCast webhook
+│   │   │   ├── loom/route.ts           # Loom webhook
+│   │   │   └── submagic/route.ts       # Submagic webhook (clips ready)
+│   │   └── submagic/
+│   │       └── magic-clips/route.ts    # Generate clips from recording
 │   ├── globals.css
 │   └── layout.tsx
 ├── components/
@@ -107,6 +113,7 @@ src/
 │   ├── supabase/
 │   │   ├── client.ts
 │   │   └── server.ts
+│   ├── submagic.ts                     # Submagic API client
 │   ├── utils.ts
 │   └── constants.ts
 ├── hooks/
@@ -306,7 +313,180 @@ export async function createClient() {
 
 ---
 
-## STEP 3: UTILITY FUNCTIONS
+## STEP 3: SUBMAGIC API CLIENT
+
+**File: `src/lib/submagic.ts`**
+
+```typescript
+/**
+ * Submagic API Client
+ * Handles all interactions with Submagic for video processing and clip generation
+ * 
+ * API Docs: https://docs.submagic.co
+ * Features: Magic Clips, AI Captions, B-Roll, Auto-Zoom, Transitions
+ */
+
+const SUBMAGIC_API_BASE = 'https://api.submagic.co/v1'
+
+interface SubmagicProjectRequest {
+  title: string
+  language?: string
+  videoUrl: string
+  templateName?: string
+  webhookUrl?: string
+  magicZooms?: boolean
+  magicBrolls?: boolean
+  magicBrollsPercentage?: number
+  dictionary?: string[]
+}
+
+interface SubmagicMagicClipsRequest {
+  title: string
+  language?: string
+  youtubeUrl?: string
+  videoUrl?: string
+  templateName?: string
+  webhookUrl?: string
+}
+
+interface SubmagicProject {
+  id: string
+  status: 'pending' | 'processing' | 'completed' | 'failed'
+  videoUrl?: string
+  downloadUrl?: string
+  transcript?: string
+  createdAt: string
+}
+
+interface SubmagicClip {
+  id: string
+  title: string
+  downloadUrl: string
+  thumbnailUrl?: string
+  duration: number
+  viralityScore?: number
+  transcript?: string
+}
+
+interface SubmagicMagicClipsResponse {
+  id: string
+  status: 'pending' | 'processing' | 'completed' | 'failed'
+  clips?: SubmagicClip[]
+}
+
+class SubmagicClient {
+  private apiKey: string
+
+  constructor(apiKey: string) {
+    this.apiKey = apiKey
+  }
+
+  private async request<T>(
+    endpoint: string,
+    options: RequestInit = {}
+  ): Promise<T> {
+    const response = await fetch(`${SUBMAGIC_API_BASE}${endpoint}`, {
+      ...options,
+      headers: {
+        'x-api-key': this.apiKey,
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}))
+      throw new Error(error.message || `Submagic API error: ${response.status}`)
+    }
+
+    return response.json()
+  }
+
+  /**
+   * Get available caption templates
+   */
+  async getTemplates(): Promise<{ templates: string[] }> {
+    return this.request('/templates')
+  }
+
+  /**
+   * Get supported languages
+   */
+  async getLanguages(): Promise<{ languages: { code: string; name: string }[] }> {
+    return this.request('/languages')
+  }
+
+  /**
+   * Create a new project for video processing (captions, effects, etc.)
+   */
+  async createProject(data: SubmagicProjectRequest): Promise<SubmagicProject> {
+    return this.request('/projects', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  /**
+   * Get project status and details
+   */
+  async getProject(projectId: string): Promise<SubmagicProject> {
+    return this.request(`/projects/${projectId}`)
+  }
+
+  /**
+   * Create Magic Clips - generates multiple short clips from a long video
+   * This is the main method for content repurposing
+   */
+  async createMagicClips(data: SubmagicMagicClipsRequest): Promise<SubmagicMagicClipsResponse> {
+    return this.request('/magic-clips', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  /**
+   * Get Magic Clips project status and clips
+   */
+  async getMagicClips(projectId: string): Promise<SubmagicMagicClipsResponse> {
+    return this.request(`/magic-clips/${projectId}`)
+  }
+
+  /**
+   * Export a project (trigger final render)
+   */
+  async exportProject(projectId: string): Promise<{ downloadUrl: string }> {
+    return this.request(`/projects/${projectId}/export`, {
+      method: 'POST',
+    })
+  }
+}
+
+// Singleton instance
+let submagicClient: SubmagicClient | null = null
+
+export function getSubmagicClient(): SubmagicClient {
+  if (!submagicClient) {
+    const apiKey = process.env.SUBMAGIC_API_KEY
+    if (!apiKey) {
+      throw new Error('SUBMAGIC_API_KEY environment variable is not set')
+    }
+    submagicClient = new SubmagicClient(apiKey)
+  }
+  return submagicClient
+}
+
+export type {
+  SubmagicProjectRequest,
+  SubmagicMagicClipsRequest,
+  SubmagicProject,
+  SubmagicClip,
+  SubmagicMagicClipsResponse,
+}
+```
+
+---
+
+## STEP 4: UTILITY FUNCTIONS
 
 **File: `src/lib/utils.ts`**
 
@@ -400,11 +580,20 @@ export const RECORDING_PLATFORMS = {
     url: "https://app.restream.io/studio",
   },
 } as const
+
+// Submagic caption templates (popular ones)
+export const SUBMAGIC_TEMPLATES = [
+  { value: "Hormozi 1", label: "Hormozi Style 1", description: "Bold, high-contrast captions" },
+  { value: "Hormozi 2", label: "Hormozi Style 2", description: "Clean professional look" },
+  { value: "Beast", label: "MrBeast Style", description: "Energetic, colorful captions" },
+  { value: "Ali", label: "Ali Abdaal Style", description: "Minimal, educational look" },
+  { value: "Sara", label: "Sara (Default)", description: "Balanced, versatile style" },
+] as const
 ```
 
 ---
 
-## STEP 4: TYPESCRIPT TYPES
+## STEP 5: TYPESCRIPT TYPES
 
 **File: `src/types/database.ts`**
 
@@ -454,7 +643,8 @@ export interface ContentIdea {
   scheduled_time: string | null
   recording_url: string | null
   recording_platform: RecordingPlatform | null
-  opus_project_id: string | null
+  submagic_project_id: string | null  // Submagic Magic Clips project ID
+  submagic_template: string | null     // Caption template used
   transcript: string | null
   created_at: string
   updated_at: string
@@ -507,15 +697,30 @@ export interface Asset {
   id: string
   content_idea_id: string
   type: "clip" | "thumbnail" | "blog" | "social_post" | "newsletter"
-  status: "generating" | "ready" | "published" | "failed"
+  status: "generating" | "ready" | "approved" | "published" | "failed"
   title: string | null
   file_url: string | null
-  metadata: any | null
+  thumbnail_url: string | null
+  duration: number | null           // For clips: duration in seconds
+  virality_score: number | null     // Submagic's AI virality prediction
+  metadata: AssetMetadata | null
   platform: string | null
   published_url: string | null
+  submagic_clip_id: string | null   // Reference to Submagic clip
   created_at: string
   updated_at: string
   published_at: string | null
+}
+
+export interface AssetMetadata {
+  // For clips from Submagic
+  transcript?: string
+  suggestedTitle?: string
+  suggestedHashtags?: string[]
+  // For thumbnails
+  imagePrompt?: string
+  // Generic
+  sourceTimestamp?: { start: number; end: number }
 }
 
 export interface ScriptData {
@@ -541,7 +746,7 @@ export interface ThumbnailConcept {
 
 ---
 
-## STEP 5: LAYOUTS
+## STEP 6: LAYOUTS
 
 **File: `src/app/layout.tsx`**
 
@@ -737,7 +942,293 @@ export function Header() {
 
 ---
 
-## STEP 6: DASHBOARD PAGE
+## STEP 7: SUBMAGIC WEBHOOK HANDLER
+
+**File: `src/app/api/webhooks/submagic/route.ts`**
+
+```typescript
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
+
+// Use service role for webhook handlers (no user context)
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
+
+interface SubmagicWebhookPayload {
+  event: 'project.completed' | 'magic_clips.completed' | 'project.failed'
+  projectId: string
+  status: 'completed' | 'failed'
+  // For magic_clips.completed
+  clips?: Array<{
+    id: string
+    title: string
+    downloadUrl: string
+    thumbnailUrl?: string
+    duration: number
+    viralityScore?: number
+    transcript?: string
+  }>
+  // For project.completed (single video processing)
+  downloadUrl?: string
+  transcript?: string
+  error?: string
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const payload: SubmagicWebhookPayload = await request.json()
+    
+    console.log('Submagic webhook received:', payload.event, payload.projectId)
+
+    // Find the content idea associated with this Submagic project
+    const { data: contentIdea, error: findError } = await supabase
+      .from('content_ideas')
+      .select('*')
+      .eq('submagic_project_id', payload.projectId)
+      .single()
+
+    if (findError || !contentIdea) {
+      console.error('Content idea not found for Submagic project:', payload.projectId)
+      return NextResponse.json({ error: 'Content idea not found' }, { status: 404 })
+    }
+
+    // Handle different webhook events
+    switch (payload.event) {
+      case 'magic_clips.completed':
+        await handleMagicClipsCompleted(contentIdea.id, payload)
+        break
+      
+      case 'project.completed':
+        await handleProjectCompleted(contentIdea.id, payload)
+        break
+      
+      case 'project.failed':
+        await handleProjectFailed(contentIdea.id, payload)
+        break
+      
+      default:
+        console.log('Unknown Submagic event:', payload.event)
+    }
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('Submagic webhook error:', error)
+    return NextResponse.json(
+      { error: 'Webhook processing failed' },
+      { status: 500 }
+    )
+  }
+}
+
+async function handleMagicClipsCompleted(
+  contentIdeaId: string,
+  payload: SubmagicWebhookPayload
+) {
+  if (!payload.clips || payload.clips.length === 0) {
+    console.log('No clips in Magic Clips response')
+    return
+  }
+
+  // Create asset records for each clip
+  const assets = payload.clips.map((clip, index) => ({
+    content_idea_id: contentIdeaId,
+    type: 'clip' as const,
+    status: 'ready' as const,  // Ready for review
+    title: clip.title || `Clip ${index + 1}`,
+    file_url: clip.downloadUrl,
+    thumbnail_url: clip.thumbnailUrl || null,
+    duration: clip.duration,
+    virality_score: clip.viralityScore || null,
+    submagic_clip_id: clip.id,
+    metadata: {
+      transcript: clip.transcript,
+      suggestedTitle: clip.title,
+    },
+    platform: 'submagic',
+  }))
+
+  // Insert all clips as assets
+  const { error: insertError } = await supabase
+    .from('assets')
+    .insert(assets)
+
+  if (insertError) {
+    console.error('Error inserting clip assets:', insertError)
+    throw insertError
+  }
+
+  // Update content idea status to ready_to_publish
+  await supabase
+    .from('content_ideas')
+    .update({ 
+      status: 'ready_to_publish',
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', contentIdeaId)
+
+  console.log(`Created ${assets.length} clip assets for content idea ${contentIdeaId}`)
+}
+
+async function handleProjectCompleted(
+  contentIdeaId: string,
+  payload: SubmagicWebhookPayload
+) {
+  // Single video processing completed (captions added, etc.)
+  // Update the content idea with the processed video URL
+  await supabase
+    .from('content_ideas')
+    .update({
+      recording_url: payload.downloadUrl,
+      transcript: payload.transcript || null,
+      status: 'processing', // Still processing if we're waiting for clips
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', contentIdeaId)
+
+  console.log(`Updated processed video for content idea ${contentIdeaId}`)
+}
+
+async function handleProjectFailed(
+  contentIdeaId: string,
+  payload: SubmagicWebhookPayload
+) {
+  console.error('Submagic processing failed:', payload.error)
+
+  // Create a failed asset record for tracking
+  await supabase
+    .from('assets')
+    .insert({
+      content_idea_id: contentIdeaId,
+      type: 'clip',
+      status: 'failed',
+      title: 'Processing Failed',
+      metadata: { error: payload.error },
+      platform: 'submagic',
+    })
+
+  // Update content idea status
+  await supabase
+    .from('content_ideas')
+    .update({
+      status: 'recording', // Revert to recording status so user can retry
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', contentIdeaId)
+}
+```
+
+---
+
+## STEP 8: SUBMAGIC API ROUTES
+
+**File: `src/app/api/submagic/magic-clips/route.ts`**
+
+```typescript
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+import { getSubmagicClient } from '@/lib/submagic'
+
+/**
+ * POST /api/submagic/magic-clips
+ * Sends a recording to Submagic for Magic Clips generation
+ */
+export async function POST(request: NextRequest) {
+  try {
+    const supabase = await createClient()
+    const { contentIdeaId, templateName = 'Hormozi 2' } = await request.json()
+
+    // Get the content idea with recording URL
+    const { data: contentIdea, error: fetchError } = await supabase
+      .from('content_ideas')
+      .select('*')
+      .eq('id', contentIdeaId)
+      .single()
+
+    if (fetchError || !contentIdea) {
+      return NextResponse.json(
+        { error: 'Content idea not found' },
+        { status: 404 }
+      )
+    }
+
+    if (!contentIdea.recording_url) {
+      return NextResponse.json(
+        { error: 'No recording URL found for this content idea' },
+        { status: 400 }
+      )
+    }
+
+    // Send to Submagic
+    const submagic = getSubmagicClient()
+    const webhookUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/submagic`
+
+    const response = await submagic.createMagicClips({
+      title: contentIdea.title,
+      language: 'en',
+      videoUrl: contentIdea.recording_url,
+      templateName,
+      webhookUrl,
+    })
+
+    // Update content idea with Submagic project ID
+    await supabase
+      .from('content_ideas')
+      .update({
+        submagic_project_id: response.id,
+        submagic_template: templateName,
+        status: 'processing',
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', contentIdeaId)
+
+    return NextResponse.json({
+      success: true,
+      projectId: response.id,
+      message: 'Video sent to Submagic for clip generation. You will be notified when clips are ready.',
+    })
+  } catch (error) {
+    console.error('Magic Clips API error:', error)
+    return NextResponse.json(
+      { error: 'Failed to create Magic Clips project' },
+      { status: 500 }
+    )
+  }
+}
+
+/**
+ * GET /api/submagic/magic-clips?projectId=xxx
+ * Check status of a Magic Clips project
+ */
+export async function GET(request: NextRequest) {
+  try {
+    const projectId = request.nextUrl.searchParams.get('projectId')
+    
+    if (!projectId) {
+      return NextResponse.json(
+        { error: 'projectId is required' },
+        { status: 400 }
+      )
+    }
+
+    const submagic = getSubmagicClient()
+    const response = await submagic.getMagicClips(projectId)
+
+    return NextResponse.json(response)
+  } catch (error) {
+    console.error('Magic Clips status error:', error)
+    return NextResponse.json(
+      { error: 'Failed to get Magic Clips status' },
+      { status: 500 }
+    )
+  }
+}
+```
+
+---
+
+## STEP 9: DASHBOARD PAGE
 
 **File: `src/app/(dashboard)/page.tsx`**
 
@@ -1022,7 +1513,7 @@ export function RecentActivity({ ideas }: RecentActivityProps) {
 
 ---
 
-## STEP 7: IDEAS PAGE
+## STEP 10: IDEAS PAGE
 
 **File: `src/app/(dashboard)/ideas/page.tsx`**
 
@@ -1157,7 +1648,7 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ContentIdea } from "@/types/database"
 import { getStatusColor, getStatusLabel, formatDuration } from "@/lib/utils"
-import { Clock, Users, Video, Radio } from "lucide-react"
+import { Clock, Users, Video, Radio, Scissors } from "lucide-react"
 
 interface IdeaCardProps {
   idea: ContentIdea
@@ -1180,11 +1671,16 @@ export function IdeaCard({ idea }: IdeaCardProps) {
           <Badge className={getStatusColor(idea.status)}>
             {getStatusLabel(idea.status)}
           </Badge>
-          {idea.confidence_score && (
-            <span className="text-xs text-muted-foreground">
-              {idea.confidence_score}% match
-            </span>
-          )}
+          <div className="flex items-center gap-2">
+            {idea.submagic_project_id && (
+              <Scissors className="w-3 h-3 text-brand" title="Clips generating" />
+            )}
+            {idea.confidence_score && (
+              <span className="text-xs text-muted-foreground">
+                {idea.confidence_score}% match
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Title */}
@@ -1229,7 +1725,7 @@ export function IdeaCard({ idea }: IdeaCardProps) {
 
 ---
 
-## STEP 8: RECORD PAGE
+## STEP 11: RECORD PAGE
 
 **File: `src/app/(dashboard)/record/page.tsx`**
 
@@ -1323,18 +1819,25 @@ export default async function RecordPage() {
 
 ---
 
-## STEP 9: DEPLOY
+## STEP 12: DEPLOY
 
 ```bash
 # Commit and push
 git add .
-git commit -m "Initial Content Command Center build"
+git commit -m "Initial Content Command Center build with Submagic integration"
 git push origin main
 
 # Deploy to Vercel
 npx vercel
 
-# Add env vars in Vercel dashboard, then:
+# Add env vars in Vercel dashboard:
+# - NEXT_PUBLIC_SUPABASE_URL
+# - NEXT_PUBLIC_SUPABASE_ANON_KEY
+# - SUPABASE_SERVICE_ROLE_KEY
+# - NEXT_PUBLIC_APP_URL (your Vercel domain)
+# - SUBMAGIC_API_KEY
+
+# Then deploy to production:
 npx vercel --prod
 ```
 
@@ -1347,9 +1850,80 @@ npx vercel --prod
 ✅ **Record Page** - Launch Loom/SquadCast/Restream
 ✅ **Dark Theme** - Brand orange #f15e13
 ✅ **Supabase Connected** - Real data persistence
+✅ **Submagic Integration** - API client, webhook handler, Magic Clips
 
-**Phase 2 (after this works):**
-- Webhook endpoints for recording platforms
-- Opus Clip integration
-- Zapier automation triggers
-- Asset management + Publishing queue
+---
+
+## CONTENT WORKFLOW WITH SUBMAGIC
+
+```
+1. CREATE IDEA
+   └── User creates content idea in dashboard
+
+2. RECORD VIDEO
+   └── User records via Loom/SquadCast/Restream
+   └── Recording URL saved to content_idea
+
+3. GENERATE CLIPS (Submagic Magic Clips)
+   └── POST /api/submagic/magic-clips
+   └── Sends recording to Submagic
+   └── Status: "processing"
+
+4. WEBHOOK RECEIVED
+   └── POST /api/webhooks/submagic
+   └── Submagic sends 20+ auto-generated clips
+   └── Each clip saved as Asset with:
+       - Download URL
+       - Thumbnail
+       - Duration
+       - Virality score
+       - Transcript
+
+5. REVIEW CLIPS
+   └── Status: "ready_to_publish"
+   └── User reviews clips in Assets page
+   └── Approve/reject each clip
+
+6. PUBLISH
+   └── Approved clips queued for publishing
+   └── Multi-platform distribution
+```
+
+---
+
+## SUBMAGIC API REFERENCE
+
+**Base URL:** `https://api.submagic.co/v1`
+
+**Authentication:** Header `x-api-key: sk-your-api-key`
+
+**Key Endpoints:**
+- `GET /templates` - List caption templates
+- `GET /languages` - List supported languages
+- `POST /projects` - Create video project (single video processing)
+- `POST /magic-clips` - Create Magic Clips project (generates 20+ clips)
+- `GET /projects/{id}` - Get project status
+- `GET /magic-clips/{id}` - Get Magic Clips status & clips
+
+**Webhook Events:**
+- `magic_clips.completed` - Clips ready for download
+- `project.completed` - Single video processing done
+- `project.failed` - Processing failed
+
+**Rate Limits:**
+- Templates/Languages: 1000 req/hour
+- Projects: 500 req/hour
+- Exports: 50 req/hour
+
+---
+
+## PHASE 2 ADDITIONS (After core works)
+
+- [ ] Assets review page with clip previews
+- [ ] Bulk approve/reject clips
+- [ ] Custom Submagic template selection per idea
+- [ ] YouTube/TikTok/Instagram direct publishing
+- [ ] Analytics dashboard with clip performance
+- [ ] Zapier/Make integration triggers
+- [ ] AI thumbnail generation
+- [ ] Newsletter/blog auto-generation from transcript

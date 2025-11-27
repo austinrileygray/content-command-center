@@ -47,17 +47,30 @@
 - ✅ Idea creation and editing
 - ✅ Status workflow management
 - ✅ Export to CSV/JSON
-- ✅ Webhook endpoints (Loom, SquadCast, Opus)
+- ✅ Webhook endpoints (Loom, SquadCast, Submagic)
 - ✅ Guest management
-- ✅ Asset tracking
-- ✅ Publishing queue
+- ✅ Asset tracking with advanced filtering and sorting
+- ✅ Bulk asset operations (approve/reject/publish)
+- ✅ Asset preview modal with video player
+- ✅ Publishing queue with remove functionality
 - ✅ Analytics dashboard
 - ✅ Settings management
+- ✅ Command palette with keyboard shortcuts (⌘K)
+- ✅ Enhanced dashboard with asset statistics
+- ✅ Assets filtering by content idea
+- ✅ Publish to queue from assets page
+- ✅ Recordings management page
+- ✅ Bulk operations for ideas
+- ✅ Enhanced analytics with real data
+- ✅ Activity feed component
+- ✅ Scheduled publishing feature
 
 ## 🔒 BLOCKED ITEMS (Require Credentials/API Keys)
 
 ### External API Integrations
-- ✅ **Opus Clip** - Webhook integration ready (no API key needed, just configure webhook URL)
+- ✅ **Submagic** - Magic Clips API integration complete (API client, webhook handler, automatic clip generation)
+  - ✅ API key configured in `.env.local`
+  - ⚠️ **Action Required:** Add `SUBMAGIC_API_KEY` to Vercel environment variables (see `VERCEL-ENV-VARS.md`)
 - ⏳ **YouTube API** - Needs OAuth for publishing
 - ⏳ **LinkedIn API** - Needs OAuth for publishing
 - ⏳ **Twitter/X API** - Needs OAuth for publishing

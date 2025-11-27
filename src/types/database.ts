@@ -43,7 +43,8 @@ export interface ContentIdea {
   scheduled_time: string | null
   recording_url: string | null
   recording_platform: RecordingPlatform | null
-  opus_project_id: string | null
+  submagic_project_id: string | null  // Submagic Magic Clips project ID
+  submagic_template: string | null     // Caption template used
   transcript: string | null
   created_at: string
   updated_at: string
@@ -96,15 +97,30 @@ export interface Asset {
   id: string
   content_idea_id: string
   type: "clip" | "thumbnail" | "blog" | "social_post" | "newsletter"
-  status: "generating" | "ready" | "published" | "failed"
+  status: "generating" | "ready" | "approved" | "published" | "failed"
   title: string | null
   file_url: string | null
-  metadata: any | null
+  thumbnail_url: string | null
+  duration: number | null           // For clips: duration in seconds
+  virality_score: number | null     // Submagic's AI virality prediction
+  metadata: AssetMetadata | null
   platform: string | null
   published_url: string | null
+  submagic_clip_id: string | null   // Reference to Submagic clip
   created_at: string
   updated_at: string
   published_at: string | null
+}
+
+export interface AssetMetadata {
+  // For clips from Submagic
+  transcript?: string
+  suggestedTitle?: string
+  suggestedHashtags?: string[]
+  // For thumbnails
+  imagePrompt?: string
+  // Generic
+  sourceTimestamp?: { start: number; end: number }
 }
 
 export interface ScriptData {

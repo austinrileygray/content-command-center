@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ContentIdea } from "@/types/database"
 import { getStatusColor, getStatusLabel, formatDuration } from "@/lib/utils"
-import { Clock, Users, Video, Radio } from "lucide-react"
+import { Clock, Users, Video, Radio, Scissors } from "lucide-react"
 
 interface IdeaCardProps {
   idea: ContentIdea
@@ -28,11 +28,16 @@ export function IdeaCard({ idea }: IdeaCardProps) {
           <Badge className={getStatusColor(idea.status)}>
             {getStatusLabel(idea.status)}
           </Badge>
-          {idea.confidence_score && (
-            <span className="text-xs text-muted-foreground">
-              {idea.confidence_score}% match
-            </span>
-          )}
+          <div className="flex items-center gap-2">
+            {idea.submagic_project_id && (
+              <Scissors className="w-3 h-3 text-brand" title="Clips generating" />
+            )}
+            {idea.confidence_score && (
+              <span className="text-xs text-muted-foreground">
+                {idea.confidence_score}% match
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Title */}

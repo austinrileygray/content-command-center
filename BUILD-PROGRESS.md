@@ -25,11 +25,26 @@
 - ✅ Publish page with queue management
 - ✅ Analytics page with metrics dashboard
 - ✅ Settings page with tabs (Profile, Integrations, Notifications, API)
-- ✅ Webhook API routes (Loom, SquadCast, Opus)
+- ✅ Webhook API routes (Loom, SquadCast, Submagic)
 - ✅ Idea creation/edit form with validation
 - ✅ Search functionality with filters
 - ✅ User menu dropdown
 - ✅ Toast notifications (Sonner)
+- ✅ Enhanced assets page with filtering, sorting, bulk operations
+- ✅ Asset preview modal with video player
+- ✅ Bulk approve/reject functionality
+- ✅ Publish to queue from assets page
+- ✅ Command palette with keyboard shortcuts (⌘K)
+- ✅ Enhanced dashboard with asset stats
+- ✅ Assets preview section on idea detail page
+- ✅ Filter assets by content idea
+- ✅ Clickable stats cards
+- ✅ Enhanced publish queue with remove functionality
+- ✅ Recordings management page with filtering and stats
+- ✅ Bulk operations for ideas (select multiple, update status)
+- ✅ Enhanced analytics with real data and distribution charts
+- ✅ Activity feed component on dashboard
+- ✅ Scheduled publishing with date picker
 
 ## 🚀 DEPLOYMENT STATUS
 
@@ -40,11 +55,12 @@
 - NEXT_PUBLIC_SUPABASE_ANON_KEY
 - SUPABASE_SERVICE_ROLE_KEY
 - NEXT_PUBLIC_APP_URL
+- SUBMAGIC_API_KEY (✅ Added to .env.local - needs to be added to Vercel)
 
 ## 📋 REMAINING ENHANCEMENTS (Require API Keys/Credentials)
 
 ### Phase 3: External Integrations (BLOCKED - Need Credentials)
-- ✅ Opus Clip webhook integration (ready - just configure webhook URL in Opus Clip settings)
+- ✅ Submagic Magic Clips integration (API client, webhook handler, automatic clip generation)
 - ⏳ YouTube API integration (needs OAuth)
 - ⏳ LinkedIn API integration (needs OAuth)
 - ⏳ Twitter/X API integration (needs OAuth)
@@ -52,15 +68,18 @@
 - ⏳ AI idea generation (needs OpenAI/Claude API key)
 
 ### Phase 4: Advanced Features (Can Build Without Credentials)
+- ✅ Bulk operations for assets (approve/reject/publish)
+- ✅ Export functionality (CSV, JSON)
+- ✅ Advanced filtering and sorting (assets page)
+- ✅ Guest management page
+- ✅ Asset preview/player (modal with video)
+- ✅ Keyboard shortcuts (Command Palette - ⌘K)
+- ✅ Enhanced dashboard with asset stats
+- ✅ Assets filtering by content idea
+- ✅ Publish to queue functionality
 - ⏳ Idea status workflow automation
-- ⏳ Bulk operations (select multiple ideas)
-- ⏳ Export functionality (CSV, JSON)
-- ⏳ Advanced filtering and sorting
-- ⏳ Guest management page
-- ⏳ Recording management page
-- ⏳ Asset preview/player
+- ⏳ Bulk operations for ideas (select multiple)
 - ⏳ Drag-and-drop pipeline board
-- ⏳ Keyboard shortcuts
 - ⏳ Dark/light theme toggle (currently dark only)
 
 ## 🎯 NEXT STEPS
@@ -69,9 +88,9 @@
 2. **Configure webhook URLs** in external services:
    - Loom: Point to `/api/webhooks/loom`
    - SquadCast: Point to `/api/webhooks/squadcast`
-   - Opus Clip: Point to `/api/webhooks/opus`
+   - Submagic: Automatically configured when creating Magic Clips
 3. **Add API keys** in Settings page for:
-   - Opus Clip API
+   - Submagic API Key (get from app.submagic.co → Settings → API)
    - YouTube API (OAuth)
    - Other platforms
 4. **Implement authentication** (currently using default profile)

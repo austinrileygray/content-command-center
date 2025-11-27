@@ -13,6 +13,7 @@ import {
   Settings,
   Zap,
   Users,
+  Radio,
 } from "lucide-react"
 
 const navigation = [
@@ -20,6 +21,7 @@ const navigation = [
   { name: "Ideas", href: "/ideas", icon: Lightbulb },
   { name: "Guests", href: "/guests", icon: Users },
   { name: "Record", href: "/record", icon: Video },
+  { name: "Recordings", href: "/recordings", icon: Radio },
   { name: "Assets", href: "/assets", icon: Package },
   { name: "Publish", href: "/publish", icon: Send },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },

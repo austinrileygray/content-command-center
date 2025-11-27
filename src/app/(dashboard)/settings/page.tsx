@@ -226,16 +226,14 @@ export default function SettingsPage() {
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="opus-webhook">Opus Clip Webhook URL</Label>
+                <Label htmlFor="submagic-key">Submagic API Key</Label>
                 <Input
-                  id="opus-webhook"
-                  type="url"
-                  defaultValue={`${typeof window !== 'undefined' ? window.location.origin : 'https://your-domain.com'}/api/webhooks/opus`}
-                  readOnly
-                  className="bg-secondary"
+                  id="submagic-key"
+                  type="password"
+                  placeholder="sk-your-submagic-api-key-here"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Configure this URL in your Opus Clip account settings. Opus Clip will send webhooks when clips are ready (no API key needed).
+                  Get your API key from <a href="https://app.submagic.co" target="_blank" rel="noopener noreferrer" className="text-brand hover:underline">app.submagic.co</a> → Settings → API. Used for Magic Clips generation.
                 </p>
               </div>
 

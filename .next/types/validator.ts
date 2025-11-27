@@ -65,6 +65,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../src/app/(dashboard)/guests/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/guests">> = Specific
+  const handler = {} as typeof import("../../src/app/(dashboard)/guests/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../src/app/(dashboard)/ideas/[id]/page.tsx
 {
   type __IsExpected<Specific extends AppPageConfig<"/ideas/[id]">> = Specific
@@ -119,6 +128,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../src/app/api/submagic/magic-clips/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/submagic/magic-clips">> = Specific
+  const handler = {} as typeof import("../../src/app/api/submagic/magic-clips/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../src/app/api/webhooks/loom/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/webhooks/loom">> = Specific
@@ -128,19 +146,19 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
-// Validate ../../src/app/api/webhooks/opus/route.ts
+// Validate ../../src/app/api/webhooks/squadcast/route.ts
 {
-  type __IsExpected<Specific extends RouteHandlerConfig<"/api/webhooks/opus">> = Specific
-  const handler = {} as typeof import("../../src/app/api/webhooks/opus/route.js")
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/webhooks/squadcast">> = Specific
+  const handler = {} as typeof import("../../src/app/api/webhooks/squadcast/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check
 }
 
-// Validate ../../src/app/api/webhooks/squadcast/route.ts
+// Validate ../../src/app/api/webhooks/submagic/route.ts
 {
-  type __IsExpected<Specific extends RouteHandlerConfig<"/api/webhooks/squadcast">> = Specific
-  const handler = {} as typeof import("../../src/app/api/webhooks/squadcast/route.js")
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/webhooks/submagic">> = Specific
+  const handler = {} as typeof import("../../src/app/api/webhooks/submagic/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check

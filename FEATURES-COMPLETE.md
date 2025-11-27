@@ -23,11 +23,26 @@
 - [x] Publish page with queue management and stats
 - [x] Analytics page with metrics dashboard and tabs
 - [x] Settings page with 4 tabs (Profile, Integrations, Notifications, API)
-- [x] Webhook API routes (Loom, SquadCast, Opus Clip)
+- [x] Webhook API routes (Loom, SquadCast, Submagic)
 - [x] Idea creation/edit form with full validation
 - [x] Search functionality with real-time filtering
 - [x] User menu dropdown with profile actions
 - [x] Toast notifications (Sonner)
+- [x] Enhanced assets page with advanced filtering and sorting
+- [x] Bulk approve/reject/publish operations for assets
+- [x] Asset preview modal with video player
+- [x] Command palette with keyboard shortcuts (⌘K)
+- [x] Enhanced dashboard with asset statistics
+- [x] Assets preview section on idea detail pages
+- [x] Filter assets by content idea (URL params)
+- [x] Publish to queue from assets (individual and bulk)
+- [x] Enhanced publish queue with remove functionality
+- [x] Clickable stats cards that link to filtered views
+- [x] Recordings management page with full table view
+- [x] Bulk operations for ideas (select multiple, update status)
+- [x] Enhanced analytics with real data visualization
+- [x] Activity feed component showing recent changes
+- [x] Scheduled publishing with calendar date picker
 
 ## Phase 3: Enhancements ✅
 - [x] Enhanced idea detail page with status actions
@@ -68,7 +83,7 @@
 - Webhook endpoints configured for:
   - Loom recordings
   - SquadCast interviews
-  - Opus Clip processing
+  - Submagic Magic Clips (automatic clip generation)
 - Database structure ready for:
   - Recording metadata
   - Asset management

@@ -17,10 +17,16 @@ export function Header() {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="Search ideas, assets..."
+            placeholder="Search ideas, assets... (⌘K)"
             className="pl-10 bg-secondary border-border"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={(e) => {
+              // Open command palette on focus with Cmd+K hint
+              if (e.target.value === "") {
+                e.target.blur()
+              }
+            }}
           />
         </div>
       </div>

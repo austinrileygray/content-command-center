@@ -16,9 +16,19 @@ A world-class AI-powered media production dashboard for managing content creatio
 
 ### Advanced Features
 - **Search & Filtering** - Real-time search with status and format filters
+- **Advanced Asset Management** - Filter by status, type, platform; sort by virality, duration, date
+- **Bulk Operations** - Select multiple assets to approve, reject, or publish
+- **Asset Preview** - Modal video player for clip preview
 - **Export Functionality** - Export ideas as CSV or JSON
 - **Status Workflow** - Visual pipeline with drag-and-drop ready structure
-- **Webhook Integration** - Ready for Loom, SquadCast, and Opus Clip webhooks
+- **Submagic Integration** - Magic Clips API for automatic clip generation from recordings
+- **Command Palette** - Keyboard shortcuts (⌘K) for quick navigation
+- **Publishing Queue** - Queue approved assets for multi-platform publishing
+- **Scheduled Publishing** - Schedule assets to publish at specific dates
+- **Recordings Management** - Track and manage all content recordings
+- **Bulk Operations** - Select multiple ideas or assets for batch actions
+- **Enhanced Analytics** - Real data visualization with distribution charts
+- **Activity Feed** - Recent activity across ideas, assets, and recordings
 - **Responsive Design** - Beautiful dark theme optimized for all devices
 - **Error Handling** - Comprehensive error boundaries and loading states
 
@@ -57,6 +67,7 @@ NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+SUBMAGIC_API_KEY=sk-your-submagic-api-key-here
 ```
 
 ## 📊 Database Schema
@@ -78,7 +89,7 @@ Configure these URLs in your external services:
 
 - **Loom:** `https://your-domain.com/api/webhooks/loom`
 - **SquadCast:** `https://your-domain.com/api/webhooks/squadcast`
-- **Opus Clip:** `https://your-domain.com/api/webhooks/opus`
+- **Submagic:** `https://your-domain.com/api/webhooks/submagic` (configured automatically when creating Magic Clips)
 
 ## 🚢 Deployment
 
@@ -108,7 +119,7 @@ src/
 ## 🎯 Roadmap
 
 ### Phase 3 (Requires API Keys)
-- [x] Opus Clip webhook integration (ready - configure webhook URL in Opus Clip)
+- [x] Submagic Magic Clips integration (API client, webhook handler, automatic clip generation)
 - [ ] YouTube API OAuth integration
 - [ ] LinkedIn API integration
 - [ ] Twitter/X API integration
