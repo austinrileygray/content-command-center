@@ -12,11 +12,13 @@ import {
   BarChart3,
   Settings,
   Zap,
+  Users,
 } from "lucide-react"
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
   { name: "Ideas", href: "/ideas", icon: Lightbulb },
+  { name: "Guests", href: "/guests", icon: Users },
   { name: "Record", href: "/record", icon: Video },
   { name: "Assets", href: "/assets", icon: Package },
   { name: "Publish", href: "/publish", icon: Send },
