@@ -73,7 +73,7 @@ export function GuestForm({ open, onOpenChange, guest }: GuestFormProps) {
       notes: guest?.notes || "",
       linkedin_url: guest?.linkedin_url || "",
       twitter_handle: guest?.twitter_handle || "",
-      status: guest?.status || "prospect",
+      status: (guest?.status as "prospect" | "contacted" | "confirmed" | "declined") || "prospect",
     },
   })
 
@@ -87,7 +87,7 @@ export function GuestForm({ open, onOpenChange, guest }: GuestFormProps) {
         bio: guest.bio || "",
         linkedin_url: guest.linkedin_url || "",
         twitter_handle: guest.twitter_handle || "",
-        status: guest.status || "prospect",
+        status: (guest.status as "prospect" | "contacted" | "confirmed" | "declined") || "prospect",
       })
     } else {
       form.reset({
