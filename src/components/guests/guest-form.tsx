@@ -36,7 +36,7 @@ const guestSchema = z.object({
   bio: z.string().optional(),
   linkedin_url: z.string().url("Invalid URL").optional().or(z.literal("")),
   twitter_handle: z.string().optional(),
-  status: z.enum(["prospect", "contacted", "confirmed", "declined"]).default("prospect"),
+  status: z.enum(["prospect", "contacted", "confirmed", "declined"]),
 }).refine(
   (data) => {
     if (data.linkedin_url && data.linkedin_url !== "") {
