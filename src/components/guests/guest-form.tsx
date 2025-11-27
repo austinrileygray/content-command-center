@@ -84,7 +84,7 @@ export function GuestForm({ open, onOpenChange, guest }: GuestFormProps) {
         email: guest.email || "",
         company: guest.company || "",
         title: guest.title || "",
-        bio: guest.bio || "",
+        notes: guest.notes || "",
         linkedin_url: guest.linkedin_url || "",
         twitter_handle: guest.twitter_handle || "",
         status: (guest.status as "prospect" | "contacted" | "confirmed" | "declined") || "prospect",
