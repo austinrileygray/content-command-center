@@ -17,7 +17,7 @@ interface GuestsClientProps {
   initialGuests: Guest[]
 }
 
-const statusColors = {
+const statusColors: Record<string, string> = {
   prospect: "bg-yellow-500/20 text-yellow-400",
   contacted: "bg-blue-500/20 text-blue-400",
   confirmed: "bg-green-500/20 text-green-400",
