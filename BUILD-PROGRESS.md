@@ -83,6 +83,7 @@
 - ✅ Drag-and-drop pipeline board (basic drag and drop implemented)
 - ✅ Idea status workflow automation (auto-transitions, workflow utilities, progress indicator)
 - ✅ Dark/light theme toggle (theme provider, toggle button, light mode CSS)
+- ✅ Newsletter/blog generation from transcript (generator component, preview, save as asset)
 
 ## 🎯 NEXT STEPS
 

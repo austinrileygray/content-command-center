@@ -21,7 +21,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
-import { Download, ExternalLink, FileVideo, Image, FileText, Share2, Mail, Clock, TrendingUp, Play, Check, X, Search, Filter, CheckSquare, Square, Send, CalendarIcon } from "lucide-react"
+import { Download, ExternalLink, FileVideo, Image, FileText, Share2, Mail, Clock, TrendingUp, Play, Check, X, Search, Filter, CheckSquare, Square, Send, CalendarIcon, Copy } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
 import { Asset } from "@/types/database"
 import { createClient } from "@/lib/supabase/client"
@@ -331,6 +331,7 @@ export function AssetsClient({ initialAssets }: AssetsClientProps) {
               <SelectItem value="clip">Clips</SelectItem>
               <SelectItem value="thumbnail">Thumbnails</SelectItem>
               <SelectItem value="blog">Blog Posts</SelectItem>
+              <SelectItem value="newsletter">Newsletters</SelectItem>
               <SelectItem value="social_post">Social Posts</SelectItem>
             </SelectContent>
           </Select>
@@ -747,12 +748,26 @@ export function AssetsClient({ initialAssets }: AssetsClientProps) {
                   poster={previewAsset.thumbnail_url || undefined}
                 />
               )}
-              {previewAsset.thumbnail_url && previewAsset.type !== "clip" && (
+              {previewAsset.thumbnail_url && previewAsset.type !== "clip" && previewAsset.type !== "blog" && previewAsset.type !== "newsletter" && (
                 <img
                   src={previewAsset.thumbnail_url}
                   alt={previewAsset.title || "Preview"}
                   className="w-full rounded-lg"
                 />
+              )}
+              {(previewAsset.type === "blog" || previewAsset.type === "newsletter") && previewAsset.metadata?.content && (
+                <Card className="p-6 bg-card border-border">
+                  <div className="prose prose-invert max-w-none">
+                    <pre className="whitespace-pre-wrap text-sm font-sans text-foreground">
+                      {previewAsset.metadata.content}
+                    </pre>
+                  </div>
+                  {previewAsset.metadata.wordCount && (
+                    <div className="mt-4 pt-4 border-t border-border text-xs text-muted-foreground">
+                      Word count: {previewAsset.metadata.wordCount} words
+                    </div>
+                  )}
+                </Card>
               )}
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
@@ -793,6 +808,38 @@ export function AssetsClient({ initialAssets }: AssetsClientProps) {
                       <ExternalLink className="w-4 h-4 mr-2" />
                       Open in New Tab
                     </a>
+                  </Button>
+                </div>
+              )}
+              {(previewAsset.type === "blog" || previewAsset.type === "newsletter") && previewAsset.metadata?.content && (
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      navigator.clipboard.writeText(previewAsset.metadata?.content || "")
+                      toast.success("Content copied to clipboard!")
+                    }}
+                  >
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copy Content
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      const blob = new Blob([previewAsset.metadata?.content || ""], { type: "text/markdown" })
+                      const url = URL.createObjectURL(blob)
+                      const a = document.createElement("a")
+                      a.href = url
+                      a.download = `${previewAsset.title?.replace(/\s+/g, "-") || "content"}.md`
+                      document.body.appendChild(a)
+                      a.click()
+                      document.body.removeChild(a)
+                      URL.revokeObjectURL(url)
+                      toast.success("Downloaded!")
+                    }}
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Download as Markdown
                   </Button>
                 </div>
               )}

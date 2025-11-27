@@ -10,9 +10,10 @@ import { getStatusColor, getStatusLabel, formatDuration } from "@/lib/utils"
 import { shouldAutoTransition, getWorkflowStage } from "@/lib/workflow-automation"
 import { ContentIdea } from "@/types/database"
 import { IdeaForm } from "@/components/ideas/idea-form"
+import { BlogGenerator } from "@/components/content/blog-generator"
 import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
-import { Edit, Trash2, ArrowRight, Calendar, Clock, Video, Users, Radio, Scissors, Sparkles, Package, ExternalLink, TrendingUp, Play } from "lucide-react"
+import { Edit, Trash2, ArrowRight, Calendar, Clock, Video, Users, Radio, Scissors, Sparkles, Package, ExternalLink, TrendingUp, Play, FileText, Mail } from "lucide-react"
 import { CONTENT_STATUSES, SUBMAGIC_TEMPLATES } from "@/lib/constants"
 import {
   DropdownMenu,
@@ -382,8 +383,31 @@ export function IdeaDetailClient({ idea: initialIdea }: IdeaDetailClientProps) {
 
             {idea.transcript && (
               <Card className="p-6 bg-card border-border">
-                <h2 className="text-lg font-semibold text-foreground mb-2">Transcript</h2>
-                <p className="text-sm text-muted-foreground whitespace-pre-wrap">{idea.transcript}</p>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-foreground">Transcript</h2>
+                  <div className="flex items-center gap-2">
+                    <BlogGenerator
+                      ideaId={idea.id}
+                      transcript={idea.transcript}
+                      title={idea.title}
+                      type="blog"
+                    />
+                    <BlogGenerator
+                      ideaId={idea.id}
+                      transcript={idea.transcript}
+                      title={idea.title}
+                      type="newsletter"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">{idea.transcript}</p>
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground pt-2 border-t border-border">
+                    <span>{idea.transcript.length} characters</span>
+                    <span>{idea.transcript.split(/\s+/).length} words</span>
+                    <span>~{Math.ceil(idea.transcript.split(/\s+/).length / 200)} min read</span>
+                  </div>
+                </div>
               </Card>
             )}
           </div>

@@ -47,6 +47,7 @@
 - [x] Pipeline board view toggle (grid/pipeline modes)
 - [x] Dark/light theme toggle with theme provider
 - [x] Idea status workflow automation with auto-transitions and progress tracking
+- [x] Newsletter/blog generation from transcript (generator component, preview modal, save as asset)
 
 ## Phase 3: Enhancements ✅
 - [x] Enhanced idea detail page with status actions

@@ -68,6 +68,7 @@
 - ✅ Pipeline board view toggle
 - ✅ Dark/light theme toggle with theme provider
 - ✅ Idea status workflow automation with auto-transitions
+- ✅ Newsletter/blog generation from transcript with preview and editing
 
 ## 🔒 BLOCKED ITEMS (Require Credentials/API Keys)
 

@@ -48,6 +48,7 @@ export function AnalyticsClient({ ideas, assets }: AnalyticsClientProps) {
       clip: assets.filter(a => a.type === "clip").length,
       thumbnail: assets.filter(a => a.type === "thumbnail").length,
       blog: assets.filter(a => a.type === "blog").length,
+      newsletter: assets.filter(a => a.type === "newsletter").length,
       social_post: assets.filter(a => a.type === "social_post").length,
     }
 

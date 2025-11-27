@@ -119,6 +119,10 @@ export interface AssetMetadata {
   suggestedHashtags?: string[]
   // For thumbnails
   imagePrompt?: string
+  // For blog/newsletter
+  content?: string
+  wordCount?: number
+  generatedFrom?: string
   // Generic
   sourceTimestamp?: { start: number; end: number }
 }
