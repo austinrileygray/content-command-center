@@ -45,6 +45,8 @@
 - ✅ Enhanced analytics with real data and distribution charts
 - ✅ Activity feed component on dashboard
 - ✅ Scheduled publishing with date picker
+- ✅ Guest form with create/edit functionality
+- ✅ Pipeline board view toggle (grid/pipeline)
 
 ## 🚀 DEPLOYMENT STATUS
 
@@ -77,9 +79,9 @@
 - ✅ Enhanced dashboard with asset stats
 - ✅ Assets filtering by content idea
 - ✅ Publish to queue functionality
+- ✅ Bulk operations for ideas (select multiple, update status)
+- ✅ Drag-and-drop pipeline board (basic drag and drop implemented)
 - ⏳ Idea status workflow automation
-- ⏳ Bulk operations for ideas (select multiple)
-- ⏳ Drag-and-drop pipeline board
 - ⏳ Dark/light theme toggle (currently dark only)
 
 ## 🎯 NEXT STEPS

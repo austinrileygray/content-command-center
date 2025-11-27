@@ -4,14 +4,16 @@ import { useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { IdeaCard } from "@/components/ideas/idea-card"
 import { IdeaForm } from "@/components/ideas/idea-form"
+import { PipelineBoardEnhanced } from "@/components/ideas/pipeline-board-enhanced"
 import { Button } from "@/components/ui/button"
-import { Plus, Sparkles, Check, X } from "lucide-react"
+import { Plus, Sparkles, Check, X, LayoutGrid, List } from "lucide-react"
 import { PageHeader } from "@/components/shared/page-header"
 import { useAppStore } from "@/stores/app-store"
 import { ContentIdea } from "@/types/database"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { exportIdeasToCSV, exportIdeasToJSON } from "@/lib/export"
 import { Download } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
@@ -34,6 +36,7 @@ export function IdeasPageClient({ initialIdeas }: IdeasPageClientProps) {
   const [selectedIdea, setSelectedIdea] = useState<ContentIdea | undefined>()
   const [selectedIdeas, setSelectedIdeas] = useState<Set<string>>(new Set())
   const [updating, setUpdating] = useState<string | null>(null)
+  const [viewMode, setViewMode] = useState<"grid" | "pipeline">("grid")
   const { searchQuery, selectedStatus, selectedFormat, setSelectedStatus, setSelectedFormat } = useAppStore()
 
   // Filter ideas based on search and filters
@@ -167,8 +170,8 @@ export function IdeasPageClient({ initialIdeas }: IdeasPageClientProps) {
         }
       />
 
-      {/* Filters */}
-      <div className="flex gap-4">
+      {/* Filters and View Toggle */}
+      <div className="flex gap-4 items-center">
         <div className="flex-1">
           <Input
             placeholder="Search ideas..."
@@ -206,6 +209,24 @@ export function IdeasPageClient({ initialIdeas }: IdeasPageClientProps) {
             <SelectItem value="live_stream">Live Stream</SelectItem>
           </SelectContent>
         </Select>
+        <div className="flex items-center gap-1 p-1 bg-secondary rounded-lg">
+          <Button
+            variant={viewMode === "grid" ? "default" : "ghost"}
+            size="sm"
+            onClick={() => setViewMode("grid")}
+            className="h-8"
+          >
+            <List className="w-4 h-4" />
+          </Button>
+          <Button
+            variant={viewMode === "pipeline" ? "default" : "ghost"}
+            size="sm"
+            onClick={() => setViewMode("pipeline")}
+            className="h-8"
+          >
+            <LayoutGrid className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
 
       {/* Bulk Actions */}
@@ -254,8 +275,11 @@ export function IdeasPageClient({ initialIdeas }: IdeasPageClientProps) {
         </div>
       )}
 
-      {/* Ideas Grid */}
-      <div className="space-y-8">
+      {/* Ideas View */}
+      {viewMode === "pipeline" ? (
+        <PipelineBoardEnhanced ideas={filteredIdeas} />
+      ) : (
+        <div className="space-y-8">
         {/* New Ideas */}
         {grouped.idea.length > 0 && (
           <section>
@@ -490,7 +514,8 @@ export function IdeasPageClient({ initialIdeas }: IdeasPageClientProps) {
             No ideas found. Try adjusting your filters or create a new idea.
           </div>
         )}
-      </div>
+        </div>
+      )}
 
       <IdeaForm
         open={showForm}

@@ -64,6 +64,8 @@
 - ✅ Enhanced analytics with real data
 - ✅ Activity feed component
 - ✅ Scheduled publishing feature
+- ✅ Guest form with create/edit/delete
+- ✅ Pipeline board view toggle
 
 ## 🔒 BLOCKED ITEMS (Require Credentials/API Keys)
 

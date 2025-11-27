@@ -43,6 +43,8 @@
 - [x] Enhanced analytics with real data visualization
 - [x] Activity feed component showing recent changes
 - [x] Scheduled publishing with calendar date picker
+- [x] Guest form with full CRUD operations
+- [x] Pipeline board view toggle (grid/pipeline modes)
 
 ## Phase 3: Enhancements ✅
 - [x] Enhanced idea detail page with status actions

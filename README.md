@@ -29,6 +29,8 @@ A world-class AI-powered media production dashboard for managing content creatio
 - **Bulk Operations** - Select multiple ideas or assets for batch actions
 - **Enhanced Analytics** - Real data visualization with distribution charts
 - **Activity Feed** - Recent activity across ideas, assets, and recordings
+- **Guest Management** - Full CRUD operations for guest pipeline
+- **Pipeline View** - Drag-and-drop kanban board for idea workflow
 - **Responsive Design** - Beautiful dark theme optimized for all devices
 - **Error Handling** - Comprehensive error boundaries and loading states
 
