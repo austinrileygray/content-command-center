@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { getStatusColor, getStatusLabel, formatDuration } from "@/lib/utils"
+import { shouldAutoTransition, getWorkflowStage } from "@/lib/workflow-automation"
 import { ContentIdea } from "@/types/database"
 import { IdeaForm } from "@/components/ideas/idea-form"
 import { createClient } from "@/lib/supabase/client"
@@ -61,6 +62,7 @@ export function IdeaDetailClient({ idea: initialIdea }: IdeaDetailClientProps) {
   const [loadingAssets, setLoadingAssets] = useState(false)
 
   const FormatIcon = formatIcons[idea.format] || Video
+  const workflowStage = getWorkflowStage(idea.status)
 
   const updateStatus = async (newStatus: string) => {
     setLoading(true)
@@ -218,6 +220,22 @@ export function IdeaDetailClient({ idea: initialIdea }: IdeaDetailClientProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idea.id])
 
+  // Auto-transition check when idea state changes
+  useEffect(() => {
+    const autoTransition = shouldAutoTransition(idea)
+    if (autoTransition.shouldTransition && autoTransition.nextStatus) {
+      // Only auto-transition if user hasn't manually set status recently
+      // This prevents infinite loops
+      const shouldAuto = confirm(
+        `Auto-transition to "${getStatusLabel(autoTransition.nextStatus)}"?\n\nReason: ${autoTransition.reason}`
+      )
+      if (shouldAuto) {
+        updateStatus(autoTransition.nextStatus)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idea.recording_url, idea.scheduled_date, idea.guest_id])
+
   return (
     <>
       <div className="space-y-6">
@@ -230,6 +248,19 @@ export function IdeaDetailClient({ idea: initialIdea }: IdeaDetailClientProps) {
               </Badge>
             </div>
             <p className="text-muted-foreground">Content idea details</p>
+            {/* Workflow Progress */}
+            <div className="mt-3">
+              <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
+                <span>Workflow: {workflowStage.stage}</span>
+                <span>{workflowStage.progress}%</span>
+              </div>
+              <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-brand rounded-full transition-all duration-500"
+                  style={{ width: `${workflowStage.progress}%` }}
+                />
+              </div>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <Button

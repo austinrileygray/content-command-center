@@ -81,8 +81,8 @@
 - ✅ Publish to queue functionality
 - ✅ Bulk operations for ideas (select multiple, update status)
 - ✅ Drag-and-drop pipeline board (basic drag and drop implemented)
-- ⏳ Idea status workflow automation
-- ⏳ Dark/light theme toggle (currently dark only)
+- ✅ Idea status workflow automation (auto-transitions, workflow utilities, progress indicator)
+- ✅ Dark/light theme toggle (theme provider, toggle button, light mode CSS)
 
 ## 🎯 NEXT STEPS
 

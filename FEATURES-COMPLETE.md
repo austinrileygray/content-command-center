@@ -45,6 +45,8 @@
 - [x] Scheduled publishing with calendar date picker
 - [x] Guest form with full CRUD operations
 - [x] Pipeline board view toggle (grid/pipeline modes)
+- [x] Dark/light theme toggle with theme provider
+- [x] Idea status workflow automation with auto-transitions and progress tracking
 
 ## Phase 3: Enhancements ✅
 - [x] Enhanced idea detail page with status actions

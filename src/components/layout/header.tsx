@@ -4,6 +4,7 @@ import { Bell, Search, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { UserMenu } from "./user-menu"
+import { ThemeToggle } from "./theme-toggle"
 import Link from "next/link"
 import { useAppStore } from "@/stores/app-store"
 
@@ -44,6 +45,8 @@ export function Header() {
           <Bell className="w-5 h-5" />
           <span className="absolute top-1 right-1 w-2 h-2 bg-brand rounded-full" />
         </Button>
+
+        <ThemeToggle />
 
         <UserMenu />
       </div>

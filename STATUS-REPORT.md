@@ -66,6 +66,8 @@
 - ✅ Scheduled publishing feature
 - ✅ Guest form with create/edit/delete
 - ✅ Pipeline board view toggle
+- ✅ Dark/light theme toggle with theme provider
+- ✅ Idea status workflow automation with auto-transitions
 
 ## 🔒 BLOCKED ITEMS (Require Credentials/API Keys)
 
