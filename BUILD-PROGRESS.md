@@ -84,6 +84,11 @@
 - ✅ Idea status workflow automation (auto-transitions, workflow utilities, progress indicator)
 - ✅ Dark/light theme toggle (theme provider, toggle button, light mode CSS)
 - ✅ Newsletter/blog generation from transcript (generator component, preview, save as asset)
+- ✅ AI idea generator component (template-based, ready for API integration)
+- ✅ Enhanced settings page with AI API key fields (OpenAI, Claude)
+- ✅ Performance utilities (debounce, throttle, memoize)
+- ✅ Debounced search for better performance
+- ✅ Additional keyboard shortcuts (⌘N for new idea, ⌘, for settings)
 
 ## 🎯 NEXT STEPS
 

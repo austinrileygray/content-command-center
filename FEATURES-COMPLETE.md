@@ -48,6 +48,10 @@
 - [x] Dark/light theme toggle with theme provider
 - [x] Idea status workflow automation with auto-transitions and progress tracking
 - [x] Newsletter/blog generation from transcript (generator component, preview modal, save as asset)
+- [x] AI idea generator component (template-based, ready for API integration)
+- [x] Enhanced settings page with AI API key fields
+- [x] Performance utilities and debounced search
+- [x] Additional keyboard shortcuts
 
 ## Phase 3: Enhancements ✅
 - [x] Enhanced idea detail page with status actions

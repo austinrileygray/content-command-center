@@ -69,6 +69,10 @@
 - ✅ Dark/light theme toggle with theme provider
 - ✅ Idea status workflow automation with auto-transitions
 - ✅ Newsletter/blog generation from transcript with preview and editing
+- ✅ AI idea generator with template-based generation (ready for API integration)
+- ✅ Enhanced settings with AI API key management
+- ✅ Performance optimizations (debounced search, utility functions)
+- ✅ Additional keyboard shortcuts
 
 ## 🔒 BLOCKED ITEMS (Require Credentials/API Keys)
 
