@@ -25,6 +25,7 @@ const navigation = [
   { name: "Recordings", href: "/recordings", icon: Radio },
   { name: "Assets", href: "/assets", icon: Package },
   { name: "Thumbnails", href: "/thumbnails", icon: ImageIcon },
+  { name: "Thumbnail Prompts", href: "/thumbnails/prompts", icon: ImageIcon },
   { name: "Publish", href: "/publish", icon: Send },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
 ]
