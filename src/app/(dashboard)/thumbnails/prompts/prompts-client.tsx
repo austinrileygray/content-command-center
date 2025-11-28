@@ -7,8 +7,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
-import { Loader2, CheckCircle2, AlertCircle } from "lucide-react"
+import { Loader2, CheckCircle2, AlertCircle, ArrowRight, FileText, ImageIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 interface PromptsClientProps {
   youtubeInitialized: boolean
@@ -72,11 +74,17 @@ export function PromptsClient({
       }
 
       const data = await response.json()
+      const sectionCount = Object.keys(data.sections || {}).length
 
       toast.success(
-        `Prompt initialized! Broken into ${Object.keys(data.sections || {}).length} modular sections.`,
-        { duration: 5000 }
+        `✅ Success! Prompt initialized and broken into ${sectionCount} modular sections.`,
+        { 
+          duration: 6000,
+          description: "Your prompt is now active and ready to use for thumbnail generation."
+        }
       )
+      
+      // Refresh to show the success state
       router.refresh()
     } catch (error: any) {
       clearTimeout(timeoutId)
@@ -119,9 +127,35 @@ export function PromptsClient({
           </CardHeader>
           <CardContent className="space-y-4">
             {youtubeInitialized ? (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <CheckCircle2 className="h-4 w-4 text-green-500" />
-                <span>Prompt initialized and active</span>
+              <div className="space-y-4">
+                <Alert className="border-green-500/50 bg-green-500/10">
+                  <CheckCircle2 className="h-5 w-5 text-green-500" />
+                  <AlertTitle className="text-green-500 font-semibold">
+                    ✅ Prompt Successfully Initialized!
+                  </AlertTitle>
+                  <AlertDescription className="text-foreground mt-2">
+                    <div className="space-y-3">
+                      <p>
+                        Your YouTube thumbnail prompt has been uploaded and broken into <strong>{youtubeVersion > 0 ? 'modular sections' : 'sections'}</strong>. 
+                        The AI model is now ready to use this prompt for generating thumbnails.
+                      </p>
+                      <div className="flex flex-wrap gap-2 pt-2">
+                        <Link href="/thumbnails">
+                          <Button variant="outline" size="sm" className="gap-2">
+                            <ImageIcon className="h-4 w-4" />
+                            Upload Thumbnails
+                            <ArrowRight className="h-3 w-3" />
+                          </Button>
+                        </Link>
+                        <Button variant="outline" size="sm" className="gap-2" disabled>
+                          <FileText className="h-4 w-4" />
+                          View Sections
+                          <span className="text-xs text-muted-foreground ml-1">(Coming soon)</span>
+                        </Button>
+                      </div>
+                    </div>
+                  </AlertDescription>
+                </Alert>
               </div>
             ) : (
               <>
@@ -171,9 +205,35 @@ export function PromptsClient({
           </CardHeader>
           <CardContent className="space-y-4">
             {shortFormInitialized ? (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <CheckCircle2 className="h-4 w-4 text-green-500" />
-                <span>Prompt initialized and active</span>
+              <div className="space-y-4">
+                <Alert className="border-green-500/50 bg-green-500/10">
+                  <CheckCircle2 className="h-5 w-5 text-green-500" />
+                  <AlertTitle className="text-green-500 font-semibold">
+                    ✅ Prompt Successfully Initialized!
+                  </AlertTitle>
+                  <AlertDescription className="text-foreground mt-2">
+                    <div className="space-y-3">
+                      <p>
+                        Your Short Form thumbnail prompt has been uploaded and broken into <strong>{shortFormVersion > 0 ? 'modular sections' : 'sections'}</strong>. 
+                        The AI model is now ready to use this prompt for generating thumbnails.
+                      </p>
+                      <div className="flex flex-wrap gap-2 pt-2">
+                        <Link href="/thumbnails">
+                          <Button variant="outline" size="sm" className="gap-2">
+                            <ImageIcon className="h-4 w-4" />
+                            Upload Thumbnails
+                            <ArrowRight className="h-3 w-3" />
+                          </Button>
+                        </Link>
+                        <Button variant="outline" size="sm" className="gap-2" disabled>
+                          <FileText className="h-4 w-4" />
+                          View Sections
+                          <span className="text-xs text-muted-foreground ml-1">(Coming soon)</span>
+                        </Button>
+                      </div>
+                    </div>
+                  </AlertDescription>
+                </Alert>
               </div>
             ) : (
               <>

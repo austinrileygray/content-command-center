@@ -137,6 +137,33 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../src/app/(dashboard)/thumbnails/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/thumbnails">> = Specific
+  const handler = {} as typeof import("../../src/app/(dashboard)/thumbnails/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/(dashboard)/thumbnails/prompts/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/thumbnails/prompts">> = Specific
+  const handler = {} as typeof import("../../src/app/(dashboard)/thumbnails/prompts/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/api/ai/analyze-thumbnail-training/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/ai/analyze-thumbnail-training">> = Specific
+  const handler = {} as typeof import("../../src/app/api/ai/analyze-thumbnail-training/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../src/app/api/ai/generate-ideas/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/ai/generate-ideas">> = Specific
@@ -146,10 +173,46 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../src/app/api/ai/generate-thumbnail-concept/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/ai/generate-thumbnail-concept">> = Specific
+  const handler = {} as typeof import("../../src/app/api/ai/generate-thumbnail-concept/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../src/app/api/submagic/magic-clips/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/submagic/magic-clips">> = Specific
   const handler = {} as typeof import("../../src/app/api/submagic/magic-clips/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/api/thumbnails/prompts/current/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/thumbnails/prompts/current">> = Specific
+  const handler = {} as typeof import("../../src/app/api/thumbnails/prompts/current/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/api/thumbnails/prompts/initialize/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/thumbnails/prompts/initialize">> = Specific
+  const handler = {} as typeof import("../../src/app/api/thumbnails/prompts/initialize/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/api/thumbnails/upload/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/thumbnails/upload">> = Specific
+  const handler = {} as typeof import("../../src/app/api/thumbnails/upload/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check
@@ -195,6 +258,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/youtube/callback">> = Specific
   const handler = {} as typeof import("../../src/app/api/youtube/callback/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/api/youtube/collect-thumbnails/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/youtube/collect-thumbnails">> = Specific
+  const handler = {} as typeof import("../../src/app/api/youtube/collect-thumbnails/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check
