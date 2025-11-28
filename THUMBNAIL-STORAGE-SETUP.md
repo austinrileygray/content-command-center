@@ -1,5 +1,7 @@
 # Thumbnail Storage Setup Guide
 
+> **Quick Start:** See `SETUP-SUPABASE-STORAGE.md` for the simplest step-by-step instructions.
+
 ## Overview
 The thumbnail training system uses Supabase Storage to store uploaded thumbnail images. This guide will help you set up the storage bucket.
 
