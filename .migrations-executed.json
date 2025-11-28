@@ -1,1 +1,4 @@
-[]
+[
+  "create-thumbnail-tables.sql",
+  "add-thumbnail-rls-policies.sql"
+]
