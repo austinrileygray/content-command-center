@@ -26,7 +26,11 @@ export async function GET(request: NextRequest) {
 
     const clientId = process.env.YOUTUBE_CLIENT_ID
     const clientSecret = process.env.YOUTUBE_CLIENT_SECRET
-    const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/youtube/callback`
+    // Get the base URL from the request
+    const protocol = request.headers.get('x-forwarded-proto') || 'https'
+    const host = request.headers.get('host') || request.nextUrl.host
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || `${protocol}://${host}`
+    const redirectUri = `${baseUrl}/api/youtube/callback`
 
     if (!clientId || !clientSecret) {
       return NextResponse.redirect(

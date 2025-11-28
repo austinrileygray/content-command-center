@@ -137,6 +137,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../src/app/api/ai/generate-ideas/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/ai/generate-ideas">> = Specific
+  const handler = {} as typeof import("../../src/app/api/ai/generate-ideas/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../src/app/api/submagic/magic-clips/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/submagic/magic-clips">> = Specific
@@ -168,6 +177,33 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/webhooks/submagic">> = Specific
   const handler = {} as typeof import("../../src/app/api/webhooks/submagic/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/api/youtube/auth/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/youtube/auth">> = Specific
+  const handler = {} as typeof import("../../src/app/api/youtube/auth/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/api/youtube/callback/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/youtube/callback">> = Specific
+  const handler = {} as typeof import("../../src/app/api/youtube/callback/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/api/youtube/publish/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/youtube/publish">> = Specific
+  const handler = {} as typeof import("../../src/app/api/youtube/publish/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check
