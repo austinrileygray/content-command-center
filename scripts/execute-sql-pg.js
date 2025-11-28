@@ -64,24 +64,49 @@ try {
  */
 async function executeSQL(sql) {
   // Build connection string
-  // Format: postgresql://postgres.[PROJECT_REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres
-  // For direct connection: postgresql://postgres:[PASSWORD]@db.[PROJECT_REF].supabase.co:5432/postgres
+  // Supabase connection format:
+  // Direct: postgresql://postgres:[PASSWORD]@db.[PROJECT_REF].supabase.co:5432/postgres
+  // Pooler: postgresql://postgres.[PROJECT_REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres
   
-  // Try to determine region from URL or use default
-  // Most Supabase projects use us-east-1 or eu-west-1
-  const connectionString = `postgresql://postgres.${projectRef}:${DB_PASSWORD}@aws-0-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require`
-  
-  // Alternative direct connection (port 5432)
+  // Try direct connection first (port 5432)
+  // If that fails, we'll try the pooler
   const directConnectionString = `postgresql://postgres:${DB_PASSWORD}@db.${projectRef}.supabase.co:5432/postgres?sslmode=require`
+  
+  // Pooler connection (port 6543) - more reliable for connection pooling
+  const poolerConnectionString = `postgresql://postgres.${projectRef}:${DB_PASSWORD}@aws-0-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require`
 
-  const client = new Client({
-    connectionString: directConnectionString,
+  // Try pooler first (more reliable), fallback to direct
+  let client = new Client({
+    connectionString: poolerConnectionString,
     ssl: { rejectUnauthorized: false }
   })
+  
+  // If pooler fails, we'll try direct connection
+  let useDirectConnection = false
 
   try {
     await client.connect()
-    console.log('✅ Connected to Supabase database\n')
+    console.log('✅ Connected to Supabase database (via pooler)\n')
+  } catch (poolerError) {
+    // Try direct connection if pooler fails
+    console.log('⚠️  Pooler connection failed, trying direct connection...')
+    await client.end().catch(() => {})
+    
+    client = new Client({
+      connectionString: directConnectionString,
+      ssl: { rejectUnauthorized: false }
+    })
+    
+    try {
+      await client.connect()
+      console.log('✅ Connected to Supabase database (direct connection)\n')
+      useDirectConnection = true
+    } catch (directError) {
+      throw poolerError // Throw original error
+    }
+  }
+  
+  try {
 
     // Clean SQL - split by semicolons but handle multi-line statements
     const statements = sql
