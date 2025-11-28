@@ -12,6 +12,9 @@
  *   node scripts/execute-sql-pg.js --file path/to/file.sql
  */
 
+// Allow self-signed certificates for Supabase connections
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+
 const fs = require('fs')
 const path = require('path')
 
@@ -34,6 +37,7 @@ function loadEnvFile() {
 loadEnvFile()
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
+// Try database password first, fallback to service role key (may not work for direct DB connection)
 const DB_PASSWORD = process.env.SUPABASE_DB_PASSWORD || process.env.SUPABASE_SERVICE_ROLE_KEY
 
 if (!SUPABASE_URL) {
@@ -78,7 +82,10 @@ async function executeSQL(sql) {
   // Try pooler first (more reliable), fallback to direct
   let client = new Client({
     connectionString: poolerConnectionString,
-    ssl: { rejectUnauthorized: false }
+    ssl: { 
+      rejectUnauthorized: false,
+      require: true
+    }
   })
   
   // If pooler fails, we'll try direct connection
@@ -94,7 +101,10 @@ async function executeSQL(sql) {
     
     client = new Client({
       connectionString: directConnectionString,
-      ssl: { rejectUnauthorized: false }
+      ssl: { 
+        rejectUnauthorized: false,
+        require: true
+      }
     })
     
     try {
@@ -102,6 +112,10 @@ async function executeSQL(sql) {
       console.log('✅ Connected to Supabase database (direct connection)\n')
       useDirectConnection = true
     } catch (directError) {
+      // If both fail, check if it's a password issue
+      if (directError.code === '28P01' || poolerError.code === '28P01') {
+        throw new Error('Authentication failed - need SUPABASE_DB_PASSWORD')
+      }
       throw poolerError // Throw original error
     }
   }
