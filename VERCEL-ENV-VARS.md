@@ -17,10 +17,11 @@ Add these to your Vercel project settings (Settings → Environment Variables):
 - Environment: Production, Preview, Development (all)
 - Description: Submagic API key for Magic Clips generation
 
-**`ANTHROPIC_API_KEY`** ✅ NEW
-- Value: `YOUR_ANTHROPIC_API_KEY_HERE`
+**`ANTHROPIC_API_KEY`** ✅ NEW - Already Added to Vercel
+- Value: (stored securely in Vercel - see `.env.local` for local development)
 - Environment: Production, Preview, Development (all)
 - Description: Anthropic Claude API key for AI-powered idea generation
+- Status: ✅ Added to Vercel production environment
 
 ## How to Add
 
@@ -45,5 +46,7 @@ Once added:
 You can also add via CLI (if you have Vercel CLI installed):
 ```bash
 npx vercel env add ANTHROPIC_API_KEY production
-# When prompted, paste: YOUR_ANTHROPIC_API_KEY_HERE
+# When prompted, paste your Anthropic API key
 ```
+
+**Note:** The `ANTHROPIC_API_KEY` has already been added to Vercel production environment. ✅
