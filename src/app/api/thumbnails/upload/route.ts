@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     // Generate unique file name
     const fileExt = file.name.split(".").pop()
     const fileName = `${userId}/${category}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
-    const filePath = `thumbnail-training/${fileName}`
+    const filePath = fileName
 
     // Convert File to ArrayBuffer for Supabase Storage
     const arrayBuffer = await file.arrayBuffer()
