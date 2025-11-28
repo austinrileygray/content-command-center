@@ -63,16 +63,30 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: "claude-3-5-sonnet-20241022",
-        max_tokens: 8000,
+    // Try latest model first, fallback to older if needed
+    const modelsToTry = [
+      "claude-sonnet-4-20250514", // Latest Claude Sonnet 4
+      "claude-3-5-sonnet-20241022", // Claude 3.5 Sonnet
+      "claude-3-5-sonnet-20240620", // Older Claude 3.5 Sonnet
+    ]
+
+    let lastError: any = null
+    let response: Response | null = null
+    let data: any = null
+
+    for (const model of modelsToTry) {
+      try {
+        console.log(`Trying model: ${model}`)
+        response = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": apiKey,
+            "anthropic-version": "2023-06-01",
+          },
+          body: JSON.stringify({
+            model,
+            max_tokens: 8000,
         messages: [
           {
             role: "user",
@@ -108,28 +122,45 @@ CRITICAL: Return ONLY a valid JSON object with this exact structure:
 Do NOT include any markdown formatting, code blocks, or explanatory text. Return ONLY the raw JSON object.`,
           },
         ],
-      }),
-    })
+        }),
+        })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      let errorData
-      try {
-        errorData = JSON.parse(errorText)
-      } catch {
-        errorData = { error: { message: errorText } }
+        if (response.ok) {
+          data = await response.json()
+          console.log(`✅ Success with model: ${model}`)
+          break // Success, exit loop
+        } else {
+          const errorText = await response.text()
+          let errorData
+          try {
+            errorData = JSON.parse(errorText)
+          } catch {
+            errorData = { error: { message: errorText } }
+          }
+          lastError = errorData
+          console.log(`❌ Model ${model} failed:`, errorData.error?.message)
+          // Continue to next model
+        }
+      } catch (error: any) {
+        lastError = error
+        console.log(`❌ Model ${model} threw error:`, error.message)
+        // Continue to next model
       }
-      console.error("Anthropic API error:", errorData)
+    }
+
+    // If all models failed, return error
+    if (!data || !response || !response.ok) {
+      console.error("All models failed. Last error:", lastError)
       return NextResponse.json(
         { 
-          error: "Failed to analyze prompt",
-          details: errorData.error?.message || errorText || "Unknown error"
+          error: "Failed to analyze prompt with any available model",
+          details: lastError?.error?.message || lastError?.message || "Unknown error",
+          triedModels: modelsToTry
         },
-        { status: response.status }
+        { status: 500 }
       )
     }
 
-    const data = await response.json()
     const content = data.content[0].text
 
     // Parse the JSON response
