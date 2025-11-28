@@ -63,10 +63,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Try latest model first, fallback to older if needed
+    // Try latest models first, fallback to older if needed
+    // Based on Anthropic's latest models (Nov 2025)
     const modelsToTry = [
-      "claude-sonnet-4-20250514", // Latest Claude Sonnet 4
-      "claude-3-5-sonnet-20241022", // Claude 3.5 Sonnet
+      "claude-sonnet-4.5-20250514", // Latest Claude Sonnet 4.5
+      "claude-opus-4.5-20250514", // Latest Claude Opus 4.5 (most advanced)
+      "claude-sonnet-4-20250514", // Claude Sonnet 4
+      "claude-3-5-sonnet-20241022", // Claude 3.5 Sonnet (deprecated but may still work)
       "claude-3-5-sonnet-20240620", // Older Claude 3.5 Sonnet
     ]
 
@@ -82,7 +85,7 @@ export async function POST(request: NextRequest) {
           headers: {
             "Content-Type": "application/json",
             "x-api-key": apiKey,
-            "anthropic-version": "2023-06-01",
+            "anthropic-version": "2023-06-01", // API version, not model version
           },
           body: JSON.stringify({
             model,
@@ -93,7 +96,7 @@ export async function POST(request: NextRequest) {
             content: `You are analyzing a comprehensive thumbnail generation prompt for ${category} content. Your task is to break this mega prompt into logical, independent modular sections.
 
 MEGA PROMPT:
-${megaPrompt.substring(0, 200000)}${megaPrompt.length > 200000 ? '\n\n[... prompt truncated for length ...]' : ''}
+${megaPrompt}
 
 INSTRUCTIONS:
 Break this prompt into logical, independent sections that can be updated separately. Focus on extracting the thumbnail-specific content. Common sections include:
