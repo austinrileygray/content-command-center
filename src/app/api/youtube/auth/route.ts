@@ -17,17 +17,21 @@ export async function GET(request: NextRequest) {
     }
 
     // Get the base URL from the request
-    const protocol = request.headers.get('x-forwarded-proto') || 'https'
-    const host = request.headers.get('host') || request.nextUrl.host
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || `${protocol}://${host}`
-    const redirectUri = `${baseUrl}/api/youtube/callback`
+    // In production (Vercel), use the actual request origin
+    const origin = request.headers.get('origin') || request.nextUrl.origin
+    const redirectUri = `${origin}/api/youtube/callback`
+    
+    // Log for debugging (remove in production if needed)
+    console.log("YouTube OAuth - Redirect URI:", redirectUri)
+    console.log("YouTube OAuth - Client ID:", clientId)
+    
     const authUrl = getYouTubeAuthUrl(redirectUri, clientId)
 
-    return NextResponse.json({ authUrl })
+    return NextResponse.json({ authUrl, redirectUri }) // Include redirectUri for debugging
   } catch (error: any) {
     console.error("YouTube auth error:", error)
     return NextResponse.json(
-      { error: "Failed to initiate YouTube auth" },
+      { error: "Failed to initiate YouTube auth", details: error.message },
       { status: 500 }
     )
   }

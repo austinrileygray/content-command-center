@@ -39,12 +39,19 @@ function SettingsContent() {
       const response = await fetch("/api/youtube/auth")
       const data = await response.json()
 
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to initiate YouTube auth")
+      }
+
       if (data.authUrl) {
+        // Log redirect URI for debugging
+        console.log("Redirect URI being used:", data.redirectUri)
         window.location.href = data.authUrl
       } else {
         throw new Error(data.error || "Failed to initiate YouTube auth")
       }
     } catch (error: any) {
+      console.error("YouTube connection error:", error)
       toast.error(error.message || "Failed to connect YouTube")
       setConnecting(false)
     }
