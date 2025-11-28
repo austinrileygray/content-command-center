@@ -40,24 +40,34 @@ export function AIIdeaGenerator({ onIdeaGenerated }: AIIdeaGeneratorProps) {
 
     setGenerating(true)
     try {
-      // Check if AI API is configured
-      const hasAIConfig = process.env.NEXT_PUBLIC_OPENAI_API_KEY || process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY
-      
-      if (!hasAIConfig) {
-        // Generate basic ideas from prompt (template-based)
-        const ideas = generateBasicIdeas(prompt)
-        setGeneratedIdeas(ideas)
-        toast.info("AI API not configured. Generated template ideas. Configure OpenAI/Claude in Settings for AI-powered generation.")
-      } else {
-        // TODO: Call AI API when configured
-        // For now, use template-based generation
-        const ideas = generateBasicIdeas(prompt)
-        setGeneratedIdeas(ideas)
-        toast.success("Ideas generated!")
+      // Call the AI API route
+      const response = await fetch("/api/ai/generate-ideas", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to generate ideas")
       }
+
+      if (data.fallback) {
+        toast.info("Using template ideas. AI API may not be configured.")
+      } else {
+        toast.success("AI-powered ideas generated!")
+      }
+
+      setGeneratedIdeas(data.ideas || [])
     } catch (error: any) {
-      toast.error("Failed to generate ideas")
+      toast.error(error.message || "Failed to generate ideas")
       console.error(error)
+      // Fallback to template ideas
+      const ideas = generateBasicIdeas(prompt)
+      setGeneratedIdeas(ideas)
     } finally {
       setGenerating(false)
     }
@@ -208,14 +218,11 @@ export function AIIdeaGenerator({ onIdeaGenerated }: AIIdeaGeneratorProps) {
             </div>
           )}
 
-          {!process.env.NEXT_PUBLIC_OPENAI_API_KEY && !process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY && (
-            <div className="p-4 bg-muted/50 rounded-lg">
-              <p className="text-sm text-muted-foreground">
-                <strong>Note:</strong> AI API not configured. Currently generating template ideas.
-                Configure OpenAI or Claude API in Settings → API Keys for AI-powered generation.
-              </p>
-            </div>
-          )}
+          <div className="p-4 bg-muted/50 rounded-lg">
+            <p className="text-sm text-muted-foreground">
+              <strong>AI-Powered:</strong> Ideas are generated using Claude AI. Enter a topic or describe what you want to create.
+            </p>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
