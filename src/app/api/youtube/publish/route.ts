@@ -80,23 +80,25 @@ export async function POST(request: NextRequest) {
       // Update stored token
       const { data: currentProfile } = await supabase
         .from("profiles")
-        .select("metadata")
+        .select("id, metadata")
         .eq("id", profile.id)
         .single()
 
-      await supabase
-        .from("profiles")
-        .update({
-          metadata: {
-            ...(currentProfile?.metadata || {}),
-            youtube: {
-              ...youtubeTokens,
-              access_token: refreshed.access_token,
-              expires_at: new Date(Date.now() + refreshed.expires_in * 1000).toISOString(),
+      if (currentProfile) {
+        await supabase
+          .from("profiles")
+          .update({
+            metadata: {
+              ...(currentProfile.metadata || {}),
+              youtube: {
+                ...youtubeTokens,
+                access_token: refreshed.access_token,
+                expires_at: new Date(Date.now() + refreshed.expires_in * 1000).toISOString(),
+              },
             },
-          },
-        })
-        .eq("id", profile.id)
+          })
+          .eq("id", profile.id)
+      }
     }
 
     // Upload to YouTube (function handles downloading from URL)
