@@ -195,7 +195,14 @@ function parseDuration(duration: string): number {
  * Default weights: Views (40%), Engagement (30%), Watch Time (20%), CTR (10%)
  */
 export function calculatePerformanceScore(
-  video: YouTubeVideoWithMetrics,
+  video: {
+    views: number
+    engagementRate?: number
+    watchTimeSeconds: number
+    averageViewDurationSeconds: number
+    durationSeconds: number
+    clickThroughRate?: number
+  },
   weights: {
     views?: number
     engagement?: number
@@ -225,7 +232,9 @@ export function calculatePerformanceScore(
   // For views, engagement, watch time: use log scale for better distribution
   const normalizedViews = Math.log10(video.views + 1) / 10 // Assuming max ~1B views
   const normalizedEngagement = video.engagementRate ? video.engagementRate / 100 : 0
-  const normalizedWatchTime = Math.min(video.averageViewDurationSeconds / video.durationSeconds, 1)
+  const normalizedWatchTime = video.durationSeconds > 0 
+    ? Math.min(video.averageViewDurationSeconds / video.durationSeconds, 1)
+    : 0
   const normalizedCTR = video.clickThroughRate ? video.clickThroughRate / 100 : 0
 
   // Calculate weighted score

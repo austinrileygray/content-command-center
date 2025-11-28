@@ -15,6 +15,7 @@ export interface YouTubeAnalyticsMetrics {
   watchTimeSeconds: number
   averageViewDurationSeconds: number
   clickThroughRate?: number
+  engagementRate?: number
 }
 
 /**
@@ -99,6 +100,7 @@ export async function fetchVideoAnalytics(
             watchTimeSeconds: Math.round(estimatedMinutesWatched * 60),
             averageViewDurationSeconds: Math.round(averageViewDuration),
             engagementRate: Math.round(engagementRate * 100) / 100,
+            clickThroughRate: undefined, // CTR requires impressions data which isn't available here
           })
         }
       } catch (error: any) {

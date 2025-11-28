@@ -164,6 +164,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../src/app/api/ai/generate-ideas-from-videos/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/ai/generate-ideas-from-videos">> = Specific
+  const handler = {} as typeof import("../../src/app/api/ai/generate-ideas-from-videos/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../src/app/api/ai/generate-ideas/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/ai/generate-ideas">> = Specific
@@ -209,6 +218,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../src/app/api/thumbnails/prompts/update/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/thumbnails/prompts/update">> = Specific
+  const handler = {} as typeof import("../../src/app/api/thumbnails/prompts/update/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../src/app/api/thumbnails/upload/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/thumbnails/upload">> = Specific
@@ -245,6 +263,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../src/app/api/youtube/analytics/fetch/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/youtube/analytics/fetch">> = Specific
+  const handler = {} as typeof import("../../src/app/api/youtube/analytics/fetch/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../src/app/api/youtube/auth/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/youtube/auth">> = Specific
@@ -276,6 +303,24 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/youtube/publish">> = Specific
   const handler = {} as typeof import("../../src/app/api/youtube/publish/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/api/youtube/videos/analyze/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/youtube/videos/analyze">> = Specific
+  const handler = {} as typeof import("../../src/app/api/youtube/videos/analyze/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/api/youtube/videos/fetch/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/youtube/videos/fetch">> = Specific
+  const handler = {} as typeof import("../../src/app/api/youtube/videos/fetch/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check

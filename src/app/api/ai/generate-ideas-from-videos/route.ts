@@ -70,10 +70,10 @@ export async function POST(request: NextRequest) {
       avgScore: p.average_performance_score,
     }))
 
-    const topVideoExamples = (topVideos || []).map((v: YouTubeVideo) => ({
-      title: v.title,
-      description: v.description,
-      score: v.performance_score,
+    const topVideoExamples = (topVideos || []).map((v: any) => ({
+      title: v.title || '',
+      description: v.description || '',
+      score: v.performance_score || 0,
     }))
 
     const prompt = `You are a content strategist analyzing successful YouTube videos to generate new content ideas.

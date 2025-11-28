@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
     // Get all videos for this user that need analytics
     const { data: videos, error: videosError } = await supabase
       .from("youtube_videos")
-      .select("id, video_id, duration_seconds")
+      .select("id, video_id, duration_seconds, title, description, published_at, thumbnail_url")
       .eq("user_id", profile.id)
 
     if (videosError || !videos || videos.length === 0) {
@@ -95,44 +95,37 @@ export async function POST(request: NextRequest) {
     const analyticsMap = await fetchVideoAnalytics(accessToken, channelId, videoIds)
 
     // Update videos with analytics data and calculate performance scores
-    const updates = videos.map(video => {
-      const analytics = analyticsMap.get(video.video_id)
-      if (!analytics) return null
+    const updates = videos
+      .map(video => {
+        const analytics = analyticsMap.get(video.video_id)
+        if (!analytics) return null
 
-      const videoWithMetrics = {
-        videoId: video.video_id,
-        title: video.title || '',
-        description: video.description || '',
-        publishedAt: video.published_at || '',
-        thumbnailUrl: video.thumbnail_url || '',
-        durationSeconds: video.duration_seconds || 0,
-        views: analytics.views,
-        likes: analytics.likes,
-        comments: analytics.comments,
-        shares: analytics.shares,
-        watchTimeSeconds: analytics.watchTimeSeconds,
-        averageViewDurationSeconds: analytics.averageViewDurationSeconds,
-        engagementRate: analytics.engagementRate,
-        clickThroughRate: analytics.clickThroughRate,
-        performanceScore: 0,
-      }
+        const videoWithMetrics = {
+          views: analytics.views,
+          engagementRate: analytics.engagementRate || 0,
+          watchTimeSeconds: analytics.watchTimeSeconds,
+          averageViewDurationSeconds: analytics.averageViewDurationSeconds,
+          durationSeconds: video.duration_seconds || 0,
+          clickThroughRate: analytics.clickThroughRate,
+        }
 
-      const performanceScore = calculatePerformanceScore(videoWithMetrics)
+        const performanceScore = calculatePerformanceScore(videoWithMetrics)
 
-      return {
-        id: video.id,
-        views: analytics.views,
-        likes: analytics.likes,
-        comments: analytics.comments,
-        shares: analytics.shares,
-        watch_time_seconds: analytics.watchTimeSeconds,
-        average_view_duration_seconds: analytics.averageViewDurationSeconds,
-        engagement_rate: analytics.engagementRate,
-        click_through_rate: analytics.clickThroughRate || null,
-        performance_score: performanceScore,
-        last_analytics_fetch: new Date().toISOString(),
-      }
-    }).filter(Boolean)
+        return {
+          id: video.id,
+          views: analytics.views,
+          likes: analytics.likes,
+          comments: analytics.comments,
+          shares: analytics.shares,
+          watch_time_seconds: analytics.watchTimeSeconds,
+          average_view_duration_seconds: analytics.averageViewDurationSeconds,
+          engagement_rate: analytics.engagementRate || null,
+          click_through_rate: analytics.clickThroughRate || null,
+          performance_score: performanceScore,
+          last_analytics_fetch: new Date().toISOString(),
+        }
+      })
+      .filter((update): update is NonNullable<typeof update> => update !== null)
 
     // Batch update videos
     for (const update of updates) {
