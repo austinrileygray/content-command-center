@@ -19,9 +19,18 @@ function getSupabaseAdmin() {
  * Initialize the base prompt template from user's mega prompt
  * Breaks it into modular sections
  */
+// Increase timeout for Vercel (Pro plan allows up to 60s, but we'll set it explicitly)
+export const maxDuration = 60 // Vercel Pro plan max
+export const runtime = 'nodejs'
+
 export async function POST(request: NextRequest) {
+  const startTime = Date.now()
+  console.log(`[${new Date().toISOString()}] Starting prompt initialization...`)
+  
   try {
     const { category, megaPrompt } = await request.json()
+    
+    console.log(`[${new Date().toISOString()}] Category: ${category}, Prompt length: ${megaPrompt?.length || 0} chars`)
 
     if (!category || !["youtube", "short_form"].includes(category)) {
       return NextResponse.json(
@@ -94,7 +103,8 @@ export async function POST(request: NextRequest) {
 
     for (const model of modelsToTry) {
       try {
-        console.log(`Trying model: ${model}`)
+        const modelStartTime = Date.now()
+        console.log(`[${new Date().toISOString()}] Trying model: ${model}`)
         response = await fetch("https://api.anthropic.com/v1/messages", {
           method: "POST",
           headers: {
@@ -145,7 +155,8 @@ Do NOT include any markdown formatting, code blocks, or explanatory text. Return
 
         if (response.ok) {
           data = await response.json()
-          console.log(`✅ Success with model: ${model}`)
+          const modelDuration = ((Date.now() - modelStartTime) / 1000).toFixed(2)
+          console.log(`✅ Success with model: ${model} (took ${modelDuration}s)`)
           break // Success, exit loop
         } else {
           const errorText = await response.text()
@@ -269,18 +280,37 @@ Do NOT include any markdown formatting, code blocks, or explanatory text. Return
       created_by: "user",
     })
 
+    const totalDuration = ((Date.now() - startTime) / 1000).toFixed(2)
+    console.log(`[${new Date().toISOString()}] ✅ Prompt initialization complete (took ${totalDuration}s)`)
+    
     return NextResponse.json({
       success: true,
       template,
       sections: parsedSections.sections,
       message: "Prompt template initialized successfully",
+      duration: totalDuration,
     })
   } catch (error: any) {
-    console.error("Prompt initialization error:", error)
+    const totalDuration = ((Date.now() - startTime) / 1000).toFixed(2)
+    console.error(`[${new Date().toISOString()}] ❌ Prompt initialization error (after ${totalDuration}s):`, error)
+    
+    // Handle timeout errors specifically
+    if (error.message?.includes("timeout") || error.message?.includes("aborted")) {
+      return NextResponse.json(
+        { 
+          error: "Request timed out",
+          details: "The prompt analysis took too long. Please try with a shorter prompt or split it into sections.",
+          duration: totalDuration
+        },
+        { status: 504 }
+      )
+    }
+    
     return NextResponse.json(
       { 
         error: error.message || "Failed to initialize prompt",
-        details: error.stack || "Unknown error occurred"
+        details: error.stack || "Unknown error occurred",
+        duration: totalDuration
       },
       { status: 500 }
     )

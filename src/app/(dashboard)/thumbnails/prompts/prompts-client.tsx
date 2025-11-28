@@ -38,7 +38,15 @@ export function PromptsClient({
 
     setInitializing(category)
 
+    // Create an AbortController for timeout
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 120000) // 2 minute timeout
+
     try {
+      toast.info("Analyzing prompt with Claude Opus 4.5... This may take 30-60 seconds for large prompts.", {
+        duration: 10000,
+      })
+
       const response = await fetch("/api/thumbnails/prompts/initialize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -46,26 +54,47 @@ export function PromptsClient({
           category,
           megaPrompt: prompt.trim(),
         }),
+        signal: controller.signal,
       })
 
-      const data = await response.json()
+      clearTimeout(timeoutId)
 
       if (!response.ok) {
+        const data = await response.json().catch(() => ({ error: "Unknown error" }))
         const errorMsg = data.error || "Failed to initialize prompt"
         const details = data.details ? `: ${data.details}` : ""
         toast.error(`${errorMsg}${details}`, {
-          duration: 6000,
+          duration: 8000,
         })
         console.error("Initialization error:", data)
+        setInitializing(null)
         return
       }
 
+      const data = await response.json()
+
       toast.success(
-        `Prompt initialized! Broken into ${Object.keys(data.sections).length} modular sections.`
+        `Prompt initialized! Broken into ${Object.keys(data.sections || {}).length} modular sections.`,
+        { duration: 5000 }
       )
       router.refresh()
     } catch (error: any) {
-      toast.error(error.message || "Failed to initialize prompt")
+      clearTimeout(timeoutId)
+      
+      if (error.name === "AbortError") {
+        toast.error("Request timed out. The prompt may be too large. Please try again or split into smaller sections.", {
+          duration: 10000,
+        })
+      } else if (error.message?.includes("fetch")) {
+        toast.error("Network error. Please check your connection and try again.", {
+          duration: 8000,
+        })
+      } else {
+        toast.error(error.message || "Failed to initialize prompt. Please try again.", {
+          duration: 8000,
+        })
+      }
+      console.error("Initialization error:", error)
     } finally {
       setInitializing(null)
     }
