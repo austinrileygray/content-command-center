@@ -70,6 +70,14 @@ export function ThumbnailsClient({ initialThumbnails }: ThumbnailsClientProps) {
 
       setThumbnails([data.thumbnail, ...thumbnails])
       toast.success(data.message || "Thumbnail uploaded and notes saved successfully!")
+      
+      // If notes were provided, show info about AI training
+      if (notes && notes.trim().length > 0) {
+        toast.info("AI is analyzing your notes to improve future thumbnail generation", {
+          duration: 4000,
+        })
+      }
+      
       setUploadDialogOpen(false)
       router.refresh()
     } catch (error: any) {

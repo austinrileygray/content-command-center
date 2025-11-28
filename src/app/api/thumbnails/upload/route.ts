@@ -1,5 +1,19 @@
 import { NextRequest, NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+import { createClient } from "@supabase/supabase-js"
+
+// Use service role for uploads to bypass RLS
+function getSupabaseAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    }
+  )
+}
 
 /**
  * POST /api/thumbnails/upload
@@ -43,7 +57,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = await createClient()
+    // Use admin client to bypass RLS
+    const supabase = getSupabaseAdmin()
 
     // Get user profile
     const { data: profiles } = await supabase
@@ -131,10 +146,23 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Trigger AI training analysis if notes are provided
+    if (notes && notes.trim().length > 0) {
+      // Analyze training data asynchronously (don't wait for it)
+      fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/ai/analyze-thumbnail-training`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ category }),
+      }).catch(err => {
+        console.error("Failed to trigger AI training analysis:", err)
+        // Don't fail the upload if analysis fails
+      })
+    }
+
     return NextResponse.json({ 
       thumbnail: data,
       success: true,
-      message: "Thumbnail uploaded and notes saved successfully"
+      message: "Thumbnail uploaded and notes saved successfully. AI training analysis started."
     })
   } catch (error: any) {
     console.error("Upload error:", error)

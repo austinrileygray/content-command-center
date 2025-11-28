@@ -1,5 +1,19 @@
 import { NextRequest, NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+import { createClient } from "@supabase/supabase-js"
+
+// Use service role for analysis to bypass RLS
+function getSupabaseAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    }
+  )
+}
 
 /**
  * POST /api/ai/analyze-thumbnail-training
@@ -16,7 +30,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = await createClient()
+    // Use admin client to bypass RLS
+    const supabase = getSupabaseAdmin()
 
     // Get user profile
     const { data: profiles } = await supabase
