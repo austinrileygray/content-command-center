@@ -19,6 +19,14 @@ export interface Profile {
   name: string | null
   avatar_url: string | null
   youtube_channel_id: string | null
+  metadata?: {
+    youtube?: {
+      access_token: string
+      refresh_token: string
+      expires_at: string
+    }
+    [key: string]: any
+  } | null
   created_at: string
   updated_at: string
 }

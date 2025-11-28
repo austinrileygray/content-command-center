@@ -10,6 +10,7 @@ CREATE TABLE profiles (
   name TEXT,
   avatar_url TEXT,
   youtube_channel_id TEXT,
+  metadata JSONB DEFAULT '{}'::jsonb,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );

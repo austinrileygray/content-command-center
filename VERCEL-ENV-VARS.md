@@ -50,3 +50,15 @@ npx vercel env add ANTHROPIC_API_KEY production
 ```
 
 **Note:** The `ANTHROPIC_API_KEY` has already been added to Vercel production environment. ✅
+
+**`YOUTUBE_CLIENT_ID`** ✅ NEW
+- Value: `66319413166-14e0viqsh4hefie1q2nqu62u1rkn0j0v.apps.googleusercontent.com`
+- Environment: Production, Preview, Development (all)
+- Description: YouTube OAuth Client ID for video publishing
+- Status: ✅ Added to .env.local - needs to be added to Vercel
+
+**`YOUTUBE_CLIENT_SECRET`** ⚠️ NEEDED
+- Value: (get from Google Cloud Console)
+- Environment: Production, Preview, Development (all)
+- Description: YouTube OAuth Client Secret (required for OAuth flow)
+- Status: ⏳ Not provided yet - needed for full YouTube integration
