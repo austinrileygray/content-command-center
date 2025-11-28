@@ -3,9 +3,9 @@
 ## ✅ Current Status
 
 **Client ID:** ✅ Configured  
-**Client Secret:** ⏳ Still needed  
+**Client Secret:** ✅ Configured  
 **OAuth Flow:** ✅ Implemented  
-**Video Publishing:** ✅ Ready (needs Client Secret)
+**Video Publishing:** ✅ Ready to use
 
 ## 📋 What's Been Built
 
@@ -32,16 +32,7 @@
 
 ## 🔧 Setup Instructions
 
-### Step 1: Get Client Secret
-
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Select your project (or create one)
-3. Navigate to **APIs & Services** → **Credentials**
-4. Find your OAuth 2.0 Client ID: `66319413166-14e0viqsh4hefie1q2nqu62u1rkn0j0v.apps.googleusercontent.com`
-5. Click on it to view details
-6. Copy the **Client Secret**
-
-### Step 2: Configure Redirect URI
+### Step 1: Configure Redirect URI
 
 1. In Google Cloud Console, edit your OAuth 2.0 Client
 2. Under **Authorized redirect URIs**, add:
@@ -49,21 +40,19 @@
    - **Local:** `http://localhost:3000/api/youtube/callback`
 3. Save changes
 
-### Step 3: Add Environment Variables
+### Step 2: Environment Variables
 
 **Local Development (.env.local):**
 ```bash
 YOUTUBE_CLIENT_ID=66319413166-14e0viqsh4hefie1q2nqu62u1rkn0j0v.apps.googleusercontent.com
-YOUTUBE_CLIENT_SECRET=your-client-secret-here
+YOUTUBE_CLIENT_SECRET=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
 ```
+✅ Already configured in `.env.local`
 
 **Vercel Production:**
-1. Go to Vercel Dashboard → Your Project → Settings → Environment Variables
-2. Add `YOUTUBE_CLIENT_ID` (already added ✅)
-3. Add `YOUTUBE_CLIENT_SECRET` with your secret value
-4. Redeploy
+✅ Both `YOUTUBE_CLIENT_ID` and `YOUTUBE_CLIENT_SECRET` are already added to Vercel
 
-### Step 4: Enable YouTube Data API v3
+### Step 3: Enable YouTube Data API v3
 
 1. In Google Cloud Console, go to **APIs & Services** → **Library**
 2. Search for "YouTube Data API v3"
@@ -99,9 +88,9 @@ YOUTUBE_CLIENT_SECRET=your-client-secret-here
 
 ## ⚠️ Important
 
-- **Client Secret** is required for the OAuth flow to work
+- ✅ **Client Secret** is configured and ready
 - Make sure **YouTube Data API v3** is enabled in Google Cloud Console
-- **Redirect URI** must match exactly in Google Cloud Console
+- **Redirect URI** must match exactly in Google Cloud Console (see Step 1)
 - Tokens are stored in the database - ensure proper security
 
 ## 🔒 Security
