@@ -42,6 +42,7 @@ export function PublishClient({ initialQueue }: PublishClientProps) {
   const supabase = createClient()
   const [queue, setQueue] = useState(initialQueue)
   const [removing, setRemoving] = useState<string | null>(null)
+  const [publishing, setPublishing] = useState<string | null>(null)
 
   const removeFromQueue = async (queueId: string) => {
     if (!confirm("Remove this item from the publishing queue?")) return
@@ -63,6 +64,81 @@ export function PublishClient({ initialQueue }: PublishClientProps) {
       console.error(error)
     } finally {
       setRemoving(null)
+    }
+  }
+
+  const publishNow = async (item: PublishingQueueItem) => {
+    if (!item.asset_id) {
+      toast.error("No asset associated with this queue item")
+      return
+    }
+
+    setPublishing(item.id)
+    try {
+      // Update status to processing
+      await supabase
+        .from("publishing_queue")
+        .update({ status: "processing" })
+        .eq("id", item.id)
+
+      // Get asset details
+      const { data: asset } = await supabase
+        .from("assets")
+        .select("*")
+        .eq("id", item.asset_id)
+        .single()
+
+      if (!asset) {
+        throw new Error("Asset not found")
+      }
+
+      // Call YouTube publish API
+      const response = await fetch("/api/youtube/publish", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          assetId: item.asset_id,
+          title: asset.title || "Untitled Video",
+          description: asset.metadata?.transcript || "",
+          tags: asset.metadata?.suggestedHashtags || [],
+          privacyStatus: "unlisted", // Default to unlisted, can be changed later
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to publish")
+      }
+
+      // Update queue item
+      await supabase
+        .from("publishing_queue")
+        .update({
+          status: "published",
+          published_at: new Date().toISOString(),
+          published_url: data.videoUrl,
+        })
+        .eq("id", item.id)
+
+      toast.success(`Published to YouTube! ${data.videoUrl}`)
+      router.refresh()
+    } catch (error: any) {
+      // Update status to failed
+      await supabase
+        .from("publishing_queue")
+        .update({
+          status: "failed",
+          error_message: error.message,
+        })
+        .eq("id", item.id)
+
+      toast.error(error.message || "Failed to publish")
+      console.error(error)
+    } finally {
+      setPublishing(null)
     }
   }
 
@@ -182,12 +258,23 @@ export function PublishClient({ initialQueue }: PublishClientProps) {
                             </a>
                           </Button>
                         )}
+                        {item.status === "pending" && item.platform === "youtube" && (
+                          <Button
+                            variant="default"
+                            size="sm"
+                            onClick={() => publishNow(item)}
+                            disabled={publishing === item.id}
+                            title="Publish to YouTube now"
+                          >
+                            {publishing === item.id ? "Publishing..." : "Publish Now"}
+                          </Button>
+                        )}
                         {item.status !== "published" && (
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => removeFromQueue(item.id)}
-                            disabled={removing === item.id}
+                            disabled={removing === item.id || publishing === item.id}
                             title="Remove from queue"
                           >
                             <Trash2 className="w-4 h-4" />
