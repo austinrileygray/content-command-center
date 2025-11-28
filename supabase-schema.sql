@@ -167,6 +167,21 @@ CREATE TABLE thumbnail_training (
 );
 
 -- ============================================
+-- THUMBNAIL TRAINING INSIGHTS
+-- ============================================
+CREATE TABLE thumbnail_training_insights (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  category TEXT NOT NULL CHECK (category IN ('youtube', 'short_form')),
+  learned_patterns JSONB NOT NULL, -- Extracted patterns from notes
+  preferences JSONB, -- User preferences (likes, dislikes)
+  requirements JSONB, -- Technical requirements (resolution, etc.)
+  last_analyzed_at TIMESTAMPTZ DEFAULT NOW(),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ============================================
 -- INDEXES
 -- ============================================
 CREATE INDEX idx_content_ideas_status ON content_ideas(status);
@@ -179,6 +194,7 @@ CREATE INDEX idx_publishing_status ON publishing_queue(status);
 CREATE INDEX idx_thumbnail_training_category ON thumbnail_training(category);
 CREATE INDEX idx_thumbnail_training_user ON thumbnail_training(user_id);
 CREATE INDEX idx_thumbnail_training_approved ON thumbnail_training(approved);
+CREATE INDEX idx_thumbnail_insights_user_category ON thumbnail_training_insights(user_id, category);
 
 -- ============================================
 -- UPDATED_AT TRIGGER
@@ -197,6 +213,7 @@ CREATE TRIGGER guests_updated_at BEFORE UPDATE ON guests FOR EACH ROW EXECUTE FU
 CREATE TRIGGER recordings_updated_at BEFORE UPDATE ON recordings FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER assets_updated_at BEFORE UPDATE ON assets FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER thumbnail_training_updated_at BEFORE UPDATE ON thumbnail_training FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER thumbnail_training_insights_updated_at BEFORE UPDATE ON thumbnail_training_insights FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- ============================================
 -- INSERT DEFAULT USER (for testing)

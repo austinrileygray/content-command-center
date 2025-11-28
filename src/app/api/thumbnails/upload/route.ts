@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server"
 
 /**
  * POST /api/thumbnails/upload
- * Upload a thumbnail for training
+ * Upload a thumbnail for training using Supabase Storage
  */
 export async function POST(request: NextRequest) {
   try {
@@ -26,12 +26,22 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // For now, convert to base64 data URL
-    // In production, upload to Supabase Storage or another service
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-    const base64 = buffer.toString("base64")
-    const imageUrl = `data:${file.type};base64,${base64}`
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      return NextResponse.json(
+        { error: "File must be an image" },
+        { status: 400 }
+      )
+    }
+
+    // Validate file size (max 10MB)
+    const maxSize = 10 * 1024 * 1024 // 10MB
+    if (file.size > maxSize) {
+      return NextResponse.json(
+        { error: "File size must be less than 10MB" },
+        { status: 400 }
+      )
+    }
 
     const supabase = await createClient()
 
@@ -48,33 +58,88 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Save to database
-    const { data, error } = await supabase
-      .from("thumbnail_training")
-      .insert({
-        user_id: profiles[0].id,
-        category,
-        image_url: imageUrl,
-        source_type: "manual",
-        approved: true,
-        notes: notes || null,
-      })
-      .select()
-      .single()
+    const userId = profiles[0].id
 
-    if (error) {
-      console.error("Database error:", error)
+    // Generate unique file name
+    const fileExt = file.name.split(".").pop()
+    const fileName = `${userId}/${category}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
+    const filePath = `thumbnail-training/${fileName}`
+
+    // Convert File to ArrayBuffer for Supabase Storage
+    const arrayBuffer = await file.arrayBuffer()
+    const fileBuffer = Buffer.from(arrayBuffer)
+
+    // Upload to Supabase Storage
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from("thumbnails")
+      .upload(filePath, fileBuffer, {
+        contentType: file.type,
+        upsert: false,
+      })
+
+    if (uploadError) {
+      console.error("Storage upload error:", uploadError)
+      
+      // If bucket doesn't exist, try to create it (this might fail if no permissions)
+      // For now, return a helpful error
+      if (uploadError.message.includes("Bucket not found")) {
+        return NextResponse.json(
+          { 
+            error: "Storage bucket 'thumbnails' not found. Please create it in Supabase Storage.",
+            details: "Go to Supabase Dashboard > Storage > Create bucket named 'thumbnails' with public access"
+          },
+          { status: 500 }
+        )
+      }
+      
       return NextResponse.json(
-        { error: "Failed to save thumbnail" },
+        { error: `Failed to upload file: ${uploadError.message}` },
         { status: 500 }
       )
     }
 
-    return NextResponse.json({ thumbnail: data })
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from("thumbnails")
+      .getPublicUrl(filePath)
+
+    const imageUrl = urlData.publicUrl
+
+    // Save to database with notes
+    const { data, error: dbError } = await supabase
+      .from("thumbnail_training")
+      .insert({
+        user_id: userId,
+        category,
+        image_url: imageUrl,
+        source_type: "manual",
+        approved: true,
+        notes: notes?.trim() || null, // Ensure notes are saved properly
+      })
+      .select()
+      .single()
+
+    if (dbError) {
+      console.error("Database error:", dbError)
+      
+      // Clean up uploaded file if database insert fails
+      await supabase.storage.from("thumbnails").remove([filePath])
+      
+      return NextResponse.json(
+        { error: `Failed to save thumbnail: ${dbError.message}` },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({ 
+      thumbnail: data,
+      success: true,
+      message: "Thumbnail uploaded and notes saved successfully"
+    })
   } catch (error: any) {
     console.error("Upload error:", error)
     return NextResponse.json(
-      { error: "Failed to upload thumbnail" },
+      { error: error.message || "Failed to upload thumbnail" },
       { status: 500 }
     )
   }

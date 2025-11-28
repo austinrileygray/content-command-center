@@ -56,11 +56,20 @@ export function ThumbnailsClient({ initialThumbnails }: ThumbnailsClientProps) {
       const data = await response.json()
 
       if (!response.ok) {
+        // Show detailed error if available
+        if (data.details) {
+          toast.error(data.error || "Failed to upload thumbnail", {
+            description: data.details,
+            duration: 5000,
+          })
+        } else {
+          toast.error(data.error || "Failed to upload thumbnail")
+        }
         throw new Error(data.error || "Failed to upload thumbnail")
       }
 
       setThumbnails([data.thumbnail, ...thumbnails])
-      toast.success("Thumbnail uploaded successfully!")
+      toast.success(data.message || "Thumbnail uploaded and notes saved successfully!")
       setUploadDialogOpen(false)
       router.refresh()
     } catch (error: any) {
