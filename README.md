@@ -97,7 +97,7 @@ Configure these URLs in your external services:
 
 The app is automatically deployed to Vercel on every push to `main`.
 
-**Production URL:** https://content-command-center-p7t3i4s8e-austins-projects-c461c44a.vercel.app
+**Production URL:** https://content-command-center-8cidjs0ue-austins-projects-c461c44a.vercel.app
 
 ## 📝 Project Structure
 
