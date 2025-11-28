@@ -6,7 +6,7 @@
 
 ## 📍 Current Production URL
 
-**https://content-command-center-g1ik3nc6u-austins-projects-c461c44a.vercel.app**
+**https://content-command-center-o1zghtm34-austins-projects-c461c44a.vercel.app**
 
 ## ✅ COMPLETED WORK
 
