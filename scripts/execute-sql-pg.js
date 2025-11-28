@@ -122,11 +122,29 @@ async function executeSQL(sql) {
   
   try {
 
-    // Clean SQL - split by semicolons but handle multi-line statements
-    const statements = sql
+    // Clean SQL - remove comments and split by semicolons
+    // Remove single-line comments (-- ...) but preserve inline comments after semicolons
+    let cleanSQL = sql
+      .split('\n')
+      .map(line => {
+        // Remove full-line comments
+        if (line.trim().startsWith('--')) return ''
+        // Remove inline comments (-- at end of line)
+        const commentIndex = line.indexOf('--')
+        if (commentIndex > 0 && !line.substring(0, commentIndex).includes("'")) {
+          return line.substring(0, commentIndex).trim()
+        }
+        return line.trim()
+      })
+      .filter(line => line.length > 0)
+      .join('\n')
+      .trim()
+    
+    // Split by semicolons, but keep multi-line statements together
+    const statements = cleanSQL
       .split(';')
-      .map(s => s.trim())
-      .filter(s => s.length > 0 && !s.startsWith('--'))
+      .map(s => s.trim().replace(/\n+/g, ' ').trim())
+      .filter(s => s.length > 0 && !s.match(/^\s*$/) && !s.toLowerCase().startsWith('note:'))
 
     console.log(`📋 Executing ${statements.length} statement(s)...\n`)
 
@@ -135,9 +153,10 @@ async function executeSQL(sql) {
       const statement = statements[i]
       if (!statement) continue
 
+      const preview = statement.substring(0, 60).replace(/\n/g, ' ')
+      
       try {
         console.log(`[${i + 1}/${statements.length}] Executing...`)
-        const preview = statement.substring(0, 60).replace(/\n/g, ' ')
         console.log(`   ${preview}${statement.length > 60 ? '...' : ''}`)
 
         const result = await client.query(statement)
