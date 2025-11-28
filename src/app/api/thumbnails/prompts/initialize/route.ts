@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-3-5-sonnet-20241022",
+        model: "claude-3-5-sonnet-20240620",
         max_tokens: 4000,
         messages: [
           {
@@ -108,10 +108,19 @@ Return ONLY the JSON object, no other text.`,
     })
 
     if (!response.ok) {
-      const error = await response.text()
-      console.error("Anthropic API error:", error)
+      const errorText = await response.text()
+      let errorData
+      try {
+        errorData = JSON.parse(errorText)
+      } catch {
+        errorData = { error: { message: errorText } }
+      }
+      console.error("Anthropic API error:", errorData)
       return NextResponse.json(
-        { error: "Failed to analyze prompt" },
+        { 
+          error: "Failed to analyze prompt",
+          details: errorData.error?.message || errorText || "Unknown error"
+        },
         { status: response.status }
       )
     }
@@ -130,8 +139,13 @@ Return ONLY the JSON object, no other text.`,
       }
     } catch (parseError) {
       console.error("Failed to parse AI response:", parseError)
+      console.error("Raw response content:", content.substring(0, 500))
       return NextResponse.json(
-        { error: "Failed to parse prompt sections" },
+        { 
+          error: "Failed to parse prompt sections",
+          details: parseError instanceof Error ? parseError.message : "Invalid JSON response",
+          rawContent: content.substring(0, 1000) // Include first 1000 chars for debugging
+        },
         { status: 500 }
       )
     }
@@ -194,7 +208,10 @@ Return ONLY the JSON object, no other text.`,
   } catch (error: any) {
     console.error("Prompt initialization error:", error)
     return NextResponse.json(
-      { error: error.message || "Failed to initialize prompt" },
+      { 
+        error: error.message || "Failed to initialize prompt",
+        details: error.stack || "Unknown error occurred"
+      },
       { status: 500 }
     )
   }

@@ -51,7 +51,12 @@ export function PromptsClient({
       const data = await response.json()
 
       if (!response.ok) {
-        toast.error(data.error || "Failed to initialize prompt")
+        const errorMsg = data.error || "Failed to initialize prompt"
+        const details = data.details ? `: ${data.details}` : ""
+        toast.error(`${errorMsg}${details}`, {
+          duration: 6000,
+        })
+        console.error("Initialization error:", data)
         return
       }
 
