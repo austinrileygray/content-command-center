@@ -178,3 +178,47 @@ export interface ThumbnailTraining {
   created_at: string
   updated_at: string
 }
+
+export interface YouTubeVideo {
+  id: string
+  user_id: string
+  video_id: string
+  title: string
+  description: string | null
+  published_at: string | null
+  thumbnail_url: string | null
+  duration_seconds: number | null
+  views: number
+  likes: number
+  comments: number
+  shares: number
+  watch_time_seconds: number
+  average_view_duration_seconds: number
+  click_through_rate: number | null
+  engagement_rate: number | null
+  performance_score: number | null
+  category_id: string | null
+  tags: string[] | null
+  language: string | null
+  topics: string[] | null
+  format_type: string | null
+  hook_pattern: string | null
+  thumbnail_style: string | null
+  last_analytics_fetch: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface ContentPattern {
+  id: string
+  user_id: string
+  pattern_type: 'topic' | 'format' | 'hook' | 'thumbnail' | 'title_structure'
+  pattern_name: string
+  pattern_data: Record<string, any>
+  performance_impact: string | null
+  video_count: number | null
+  average_performance_score: number | null
+  last_analyzed_at: string
+  created_at: string
+  updated_at: string
+}

@@ -32,6 +32,8 @@ export function getYouTubeAuthUrl(redirectUri: string, clientId: string): string
   const scopes = [
     'https://www.googleapis.com/auth/youtube.upload',
     'https://www.googleapis.com/auth/youtube',
+    'https://www.googleapis.com/auth/youtube.readonly', // For fetching videos
+    'https://www.googleapis.com/auth/yt-analytics.readonly', // For analytics data
   ].join(' ')
 
   const params = new URLSearchParams({
