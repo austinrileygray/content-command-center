@@ -71,37 +71,41 @@ export async function POST(request: NextRequest) {
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-3-5-sonnet-20240620",
-        max_tokens: 4000,
+        model: "claude-3-5-sonnet-20241022",
+        max_tokens: 8000,
         messages: [
           {
             role: "user",
-            content: `Analyze this thumbnail generation prompt for ${category} content and break it into modular sections.
+            content: `You are analyzing a comprehensive thumbnail generation prompt for ${category} content. Your task is to break this mega prompt into logical, independent modular sections.
 
 MEGA PROMPT:
-${megaPrompt}
+${megaPrompt.substring(0, 200000)}${megaPrompt.length > 200000 ? '\n\n[... prompt truncated for length ...]' : ''}
 
-Break this prompt into logical, independent sections that can be updated separately. Common sections include:
-- color_palette: Color schemes, brand colors, contrast requirements
-- text_style: Font choices, text placement, word limits
-- layout: Composition rules, element placement, rule of thirds
-- visual_elements: Subject positioning, background style, props
-- emotion_tone: Emotional impact, mood, energy level
+INSTRUCTIONS:
+Break this prompt into logical, independent sections that can be updated separately. Focus on extracting the thumbnail-specific content. Common sections include:
+- color_palette: Color schemes, brand colors, contrast requirements, specific hex codes
+- text_style: Font choices, text placement, word limits, capitalization rules
+- layout: Composition rules, element placement, rule of thirds, positioning guidelines
+- visual_elements: Subject positioning, background style, props, equipment visuals
+- emotion_tone: Emotional impact, mood, energy level, facial expressions
 - technical_specs: Resolution, aspect ratio, file format requirements
 - best_practices: General guidelines, what to avoid, proven patterns
+- thumbnail_formulas: Specific formulas and structures (e.g., Style A, Style B, Style C)
+- element_library: Visual elements to include (equipment, software, etc.)
+- language_guidelines: Industry-specific terminology and preferred wording
 
-Return a JSON object with this structure:
+CRITICAL: Return ONLY a valid JSON object with this exact structure:
 {
   "sections": {
     "section_name": {
-      "content": "Detailed content for this section...",
+      "content": "Detailed content for this section extracted from the prompt...",
       "last_updated": "${new Date().toISOString()}",
       "updated_by": "initial"
     }
   }
 }
 
-Return ONLY the JSON object, no other text.`,
+Do NOT include any markdown formatting, code blocks, or explanatory text. Return ONLY the raw JSON object.`,
           },
         ],
       }),
