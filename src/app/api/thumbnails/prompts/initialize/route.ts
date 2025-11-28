@@ -81,10 +81,11 @@ export async function POST(request: NextRequest) {
 
     // Try latest models first, fallback to older if needed
     // Model names must match Anthropic's exact identifiers
+    // Tested: claude-opus-4-5-20251101 works with this API key
     const modelsToTry = [
-      "claude-3-5-sonnet-20241022", // Start with known working model
-      "claude-3-5-sonnet-20240620", // Fallback to older version
-      "claude-3-opus-20240229", // Opus as last resort
+      "claude-opus-4-5-20251101", // Claude Opus 4.5 (latest, most advanced) - CONFIRMED WORKING
+      "claude-3-5-sonnet-20241022", // Claude 3.5 Sonnet (fallback)
+      "claude-3-5-sonnet-20240620", // Older Claude 3.5 Sonnet
     ]
 
     let lastError: any = null
@@ -103,7 +104,7 @@ export async function POST(request: NextRequest) {
           },
           body: JSON.stringify({
             model,
-            max_tokens: 8000,
+            max_tokens: 16000, // Increased for Opus 4.5 which can handle larger contexts
         messages: [
           {
             role: "user",
