@@ -148,18 +148,20 @@ export function ThumbnailsClient({ initialThumbnails }: ThumbnailsClientProps) {
                 Upload Thumbnail
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-md max-h-[90vh] overflow-hidden flex flex-col">
               <DialogHeader>
                 <DialogTitle>Upload Thumbnail</DialogTitle>
                 <DialogDescription>
                   Upload a thumbnail to train the AI model
                 </DialogDescription>
               </DialogHeader>
-              <ThumbnailUploadForm
-                category={selectedCategory}
-                onUpload={handleFileUpload}
-                uploading={uploading}
-              />
+              <div className="flex-1 overflow-y-auto pr-1">
+                <ThumbnailUploadForm
+                  category={selectedCategory}
+                  onUpload={handleFileUpload}
+                  uploading={uploading}
+                />
+              </div>
             </DialogContent>
           </Dialog>
         </div>
@@ -222,7 +224,7 @@ function ThumbnailUploadForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4 max-h-[80vh] overflow-y-auto">
       <div className="space-y-2">
         <Label htmlFor="file">Thumbnail Image</Label>
         <Input
@@ -233,12 +235,14 @@ function ThumbnailUploadForm({
           required
         />
         {preview && (
-          <div className="mt-2">
-            <img
-              src={preview}
-              alt="Preview"
-              className="w-full max-w-md rounded-lg border border-border"
-            />
+          <div className="mt-2 flex justify-center">
+            <div className="relative w-full max-w-[300px] aspect-video rounded-lg border border-border overflow-hidden bg-muted">
+              <img
+                src={preview}
+                alt="Preview"
+                className="w-full h-full object-cover"
+              />
+            </div>
           </div>
         )}
       </div>
@@ -249,11 +253,14 @@ function ThumbnailUploadForm({
           placeholder="Add any notes about this thumbnail..."
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
+          rows={3}
         />
       </div>
-      <Button type="submit" disabled={!file || uploading} className="w-full">
-        {uploading ? "Uploading..." : "Upload"}
-      </Button>
+      <div className="pt-2 border-t border-border">
+        <Button type="submit" disabled={!file || uploading} className="w-full">
+          {uploading ? "Uploading..." : "Upload"}
+        </Button>
+      </div>
     </form>
   )
 }
