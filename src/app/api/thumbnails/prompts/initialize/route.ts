@@ -165,14 +165,31 @@ Do NOT include any markdown formatting, code blocks, or explanatory text. Return
       }
     }
 
-    // If all models failed, return error
+    // If all models failed, return error with helpful debugging info
     if (!data || !response || !response.ok) {
       console.error("All models failed. Last error:", lastError)
+      const errorMessage = lastError?.error?.message || lastError?.message || "Unknown error"
+      
+      // Provide specific guidance based on error type
+      let userFriendlyMessage = "Failed to analyze prompt"
+      if (errorMessage.includes("not_found") || errorMessage.includes("model")) {
+        userFriendlyMessage = "Model not available. Please check your Anthropic API plan and model access."
+      } else if (errorMessage.includes("authentication") || errorMessage.includes("api_key")) {
+        userFriendlyMessage = "API key authentication failed. Please verify your ANTHROPIC_API_KEY in Vercel."
+      } else if (errorMessage.includes("rate_limit") || errorMessage.includes("quota")) {
+        userFriendlyMessage = "API rate limit exceeded. Please try again in a moment."
+      }
+      
       return NextResponse.json(
         { 
-          error: "Failed to analyze prompt with any available model",
-          details: lastError?.error?.message || lastError?.message || "Unknown error",
-          triedModels: modelsToTry
+          error: userFriendlyMessage,
+          details: errorMessage,
+          triedModels: modelsToTry,
+          debugInfo: {
+            apiKeyPresent: !!apiKey,
+            apiKeyPrefix: apiKey?.substring(0, 10) + "...",
+            lastErrorType: lastError?.error?.type
+          }
         },
         { status: 500 }
       )
