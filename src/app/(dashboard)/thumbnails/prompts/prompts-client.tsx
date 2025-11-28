@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
-import { Loader2, CheckCircle2, AlertCircle, ArrowRight, FileText, ImageIcon } from "lucide-react"
+import { Loader2, CheckCircle2, AlertCircle, ArrowRight, FileText, ImageIcon, Edit, Plus } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -17,6 +17,8 @@ interface PromptsClientProps {
   shortFormInitialized: boolean
   youtubeVersion: number
   shortFormVersion: number
+  youtubeSections: Record<string, any> | null
+  shortFormSections: Record<string, any> | null
 }
 
 export function PromptsClient({
@@ -24,13 +26,49 @@ export function PromptsClient({
   shortFormInitialized,
   youtubeVersion,
   shortFormVersion,
+  youtubeSections,
+  shortFormSections,
 }: PromptsClientProps) {
   const router = useRouter()
   const [youtubePrompt, setYoutubePrompt] = useState("")
   const [shortFormPrompt, setShortFormPrompt] = useState("")
   const [initializing, setInitializing] = useState<string | null>(null)
+  const [editing, setEditing] = useState<string | null>(null) // "youtube" | "short_form" | null
 
-  const handleInitialize = async (category: "youtube" | "short_form") => {
+  // Reconstruct mega prompt from sections (for editing)
+  const reconstructPrompt = (sections: Record<string, any> | null): string => {
+    if (!sections) return ""
+    return Object.entries(sections)
+      .map(([name, data]) => {
+        const content = typeof data === "object" ? data.content : data
+        return `## ${name.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase())}\n${content}`
+      })
+      .join("\n\n")
+  }
+
+  // Load prompt for editing
+  const handleEdit = (category: "youtube" | "short_form") => {
+    const sections = category === "youtube" ? youtubeSections : shortFormSections
+    const reconstructed = reconstructPrompt(sections)
+    
+    if (category === "youtube") {
+      setYoutubePrompt(reconstructed)
+    } else {
+      setShortFormPrompt(reconstructed)
+    }
+    setEditing(category)
+  }
+
+  const handleCancelEdit = (category: "youtube" | "short_form") => {
+    if (category === "youtube") {
+      setYoutubePrompt("")
+    } else {
+      setShortFormPrompt("")
+    }
+    setEditing(null)
+  }
+
+  const handleInitialize = async (category: "youtube" | "short_form", isUpdate: boolean = false) => {
     const prompt = category === "youtube" ? youtubePrompt : shortFormPrompt
 
     if (!prompt.trim()) {
@@ -49,7 +87,11 @@ export function PromptsClient({
         duration: 10000,
       })
 
-      const response = await fetch("/api/thumbnails/prompts/initialize", {
+      const endpoint = isUpdate 
+        ? "/api/thumbnails/prompts/update"
+        : "/api/thumbnails/prompts/initialize"
+
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -77,14 +119,22 @@ export function PromptsClient({
       const sectionCount = Object.keys(data.sections || {}).length
 
       toast.success(
-        `✅ Success! Prompt initialized and broken into ${sectionCount} modular sections.`,
+        `✅ Success! Prompt ${isUpdate ? 'updated' : 'initialized'} and broken into ${sectionCount} modular sections.`,
         { 
           duration: 6000,
-          description: "Your prompt is now active and ready to use for thumbnail generation."
+          description: isUpdate 
+            ? `Updated to version ${data.template?.version_number || 'new'}. Your prompt is now active.`
+            : "Your prompt is now active and ready to use for thumbnail generation."
         }
       )
       
-      // Refresh to show the success state
+      // Clear editing state and refresh
+      setEditing(null)
+      if (category === "youtube") {
+        setYoutubePrompt("")
+      } else {
+        setShortFormPrompt("")
+      }
       router.refresh()
     } catch (error: any) {
       clearTimeout(timeoutId)
@@ -126,7 +176,7 @@ export function PromptsClient({
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {youtubeInitialized ? (
+            {youtubeInitialized && editing !== "youtube" ? (
               <div className="space-y-4">
                 <Alert className="border-green-500/50 bg-green-500/10">
                   <CheckCircle2 className="h-5 w-5 text-green-500" />
@@ -140,6 +190,15 @@ export function PromptsClient({
                         The AI model is now ready to use this prompt for generating thumbnails.
                       </p>
                       <div className="flex flex-wrap gap-2 pt-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="gap-2"
+                          onClick={() => handleEdit("youtube")}
+                        >
+                          <Edit className="h-4 w-4" />
+                          Edit Prompt
+                        </Button>
                         <Link href="/thumbnails">
                           <Button variant="outline" size="sm" className="gap-2">
                             <ImageIcon className="h-4 w-4" />
@@ -173,20 +232,44 @@ export function PromptsClient({
                     The AI will automatically break this into modular sections that can be updated independently.
                   </p>
                 </div>
-                <Button
-                  onClick={() => handleInitialize("youtube")}
-                  disabled={!youtubePrompt.trim() || initializing === "youtube"}
-                  className="w-full"
-                >
-                  {initializing === "youtube" ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Initializing...
-                    </>
-                  ) : (
-                    "Initialize YouTube Prompt"
+                <div className="flex gap-2">
+                  {editing === "youtube" && (
+                    <Button
+                      variant="outline"
+                      onClick={() => handleCancelEdit("youtube")}
+                      disabled={initializing === "youtube"}
+                      className="flex-1"
+                    >
+                      Cancel
+                    </Button>
                   )}
-                </Button>
+                  <Button
+                    onClick={() => handleInitialize("youtube", editing === "youtube")}
+                    disabled={!youtubePrompt.trim() || initializing === "youtube"}
+                    className={editing === "youtube" ? "flex-1" : "w-full"}
+                  >
+                    {initializing === "youtube" ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        {editing === "youtube" ? "Updating..." : "Initializing..."}
+                      </>
+                    ) : (
+                      <>
+                        {editing === "youtube" ? (
+                          <>
+                            <Edit className="mr-2 h-4 w-4" />
+                            Update Prompt
+                          </>
+                        ) : (
+                          <>
+                            <Plus className="mr-2 h-4 w-4" />
+                            Initialize YouTube Prompt
+                          </>
+                        )}
+                      </>
+                    )}
+                  </Button>
+                </div>
               </>
             )}
           </CardContent>
@@ -204,7 +287,7 @@ export function PromptsClient({
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {shortFormInitialized ? (
+            {shortFormInitialized && editing !== "short_form" ? (
               <div className="space-y-4">
                 <Alert className="border-green-500/50 bg-green-500/10">
                   <CheckCircle2 className="h-5 w-5 text-green-500" />
@@ -218,6 +301,15 @@ export function PromptsClient({
                         The AI model is now ready to use this prompt for generating thumbnails.
                       </p>
                       <div className="flex flex-wrap gap-2 pt-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="gap-2"
+                          onClick={() => handleEdit("short_form")}
+                        >
+                          <Edit className="h-4 w-4" />
+                          Edit Prompt
+                        </Button>
                         <Link href="/thumbnails">
                           <Button variant="outline" size="sm" className="gap-2">
                             <ImageIcon className="h-4 w-4" />
@@ -251,20 +343,44 @@ export function PromptsClient({
                     The AI will automatically break this into modular sections that can be updated independently.
                   </p>
                 </div>
-                <Button
-                  onClick={() => handleInitialize("short_form")}
-                  disabled={!shortFormPrompt.trim() || initializing === "short_form"}
-                  className="w-full"
-                >
-                  {initializing === "short_form" ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Initializing...
-                    </>
-                  ) : (
-                    "Initialize Short Form Prompt"
+                <div className="flex gap-2">
+                  {editing === "short_form" && (
+                    <Button
+                      variant="outline"
+                      onClick={() => handleCancelEdit("short_form")}
+                      disabled={initializing === "short_form"}
+                      className="flex-1"
+                    >
+                      Cancel
+                    </Button>
                   )}
-                </Button>
+                  <Button
+                    onClick={() => handleInitialize("short_form", editing === "short_form")}
+                    disabled={!shortFormPrompt.trim() || initializing === "short_form"}
+                    className={editing === "short_form" ? "flex-1" : "w-full"}
+                  >
+                    {initializing === "short_form" ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        {editing === "short_form" ? "Updating..." : "Initializing..."}
+                      </>
+                    ) : (
+                      <>
+                        {editing === "short_form" ? (
+                          <>
+                            <Edit className="mr-2 h-4 w-4" />
+                            Update Prompt
+                          </>
+                        ) : (
+                          <>
+                            <Plus className="mr-2 h-4 w-4" />
+                            Initialize Short Form Prompt
+                          </>
+                        )}
+                      </>
+                    )}
+                  </Button>
+                </div>
               </>
             )}
           </CardContent>

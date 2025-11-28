@@ -25,7 +25,7 @@ const navigation = [
   { name: "Recordings", href: "/recordings", icon: Radio },
   { name: "Assets", href: "/assets", icon: Package },
   { name: "Thumbnails", href: "/thumbnails", icon: ImageIcon },
-  { name: "Thumbnail Prompts", href: "/thumbnails/prompts", icon: ImageIcon },
+  { name: "Prompts", href: "/thumbnails/prompts", icon: ImageIcon },
   { name: "Publish", href: "/publish", icon: Send },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
 ]
@@ -52,8 +52,30 @@ export function Sidebar() {
       {/* Navigation */}
       <nav className="flex-1 p-3 space-y-1">
         {navigation.map((item) => {
-          const isActive = pathname === item.href || 
-            (item.href !== "/" && pathname.startsWith(item.href))
+          // Fix: Only highlight exact match
+          // For /thumbnails/prompts, don't highlight /thumbnails
+          // For /thumbnails, don't highlight if we're on /thumbnails/prompts
+          let isActive = false
+          if (item.href === "/") {
+            isActive = pathname === "/"
+          } else {
+            // Exact match
+            if (pathname === item.href) {
+              isActive = true
+            } else if (pathname.startsWith(item.href + "/")) {
+              // Child route - only active if this is the parent
+              // But exclude if we're on a sibling route
+              // Example: /thumbnails should NOT be active when on /thumbnails/prompts
+              const nextSegment = pathname.slice(item.href.length + 1).split("/")[0]
+              // Only highlight if there's no conflicting parent route
+              const hasConflictingParent = navigation.some(nav => 
+                nav.href !== item.href && 
+                nav.href.startsWith(item.href) &&
+                pathname.startsWith(nav.href)
+              )
+              isActive = !hasConflictingParent
+            }
+          }
           const Icon = item.icon
 
           return (

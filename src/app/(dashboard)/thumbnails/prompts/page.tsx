@@ -5,17 +5,17 @@ import { PromptsClient } from "./prompts-client"
 export default async function ThumbnailPromptsPage() {
   const supabase = await createClient()
 
-  // Check if prompts are initialized
+  // Check if prompts are initialized and get full template data
   const { data: youtubeTemplate } = await supabase
     .from("thumbnail_prompt_templates")
-    .select("id, version_number, updated_at")
+    .select("id, version_number, updated_at, sections")
     .eq("category", "youtube")
     .eq("is_active", true)
     .single()
 
   const { data: shortFormTemplate } = await supabase
     .from("thumbnail_prompt_templates")
-    .select("id, version_number, updated_at")
+    .select("id, version_number, updated_at, sections")
     .eq("category", "short_form")
     .eq("is_active", true)
     .single()
@@ -31,6 +31,8 @@ export default async function ThumbnailPromptsPage() {
         shortFormInitialized={!!shortFormTemplate}
         youtubeVersion={youtubeTemplate?.version_number || 0}
         shortFormVersion={shortFormTemplate?.version_number || 0}
+        youtubeSections={youtubeTemplate?.sections || null}
+        shortFormSections={shortFormTemplate?.sections || null}
       />
     </div>
   )
