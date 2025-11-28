@@ -57,20 +57,34 @@ export async function POST(request: NextRequest) {
     // Use Claude to break the mega prompt into modular sections
     const apiKey = process.env.ANTHROPIC_API_KEY
     if (!apiKey) {
+      console.error("ANTHROPIC_API_KEY is missing from environment")
       return NextResponse.json(
-        { error: "Anthropic API key not configured" },
+        { 
+          error: "Anthropic API key not configured",
+          details: "Please add ANTHROPIC_API_KEY to your Vercel environment variables"
+        },
+        { status: 500 }
+      )
+    }
+
+    // Validate API key format (should start with sk-ant-)
+    if (!apiKey.startsWith("sk-ant-")) {
+      console.error("ANTHROPIC_API_KEY format appears incorrect")
+      return NextResponse.json(
+        { 
+          error: "Invalid Anthropic API key format",
+          details: "API key should start with 'sk-ant-'"
+        },
         { status: 500 }
       )
     }
 
     // Try latest models first, fallback to older if needed
-    // Based on Anthropic's latest models (Nov 2025)
+    // Model names must match Anthropic's exact identifiers
     const modelsToTry = [
-      "claude-sonnet-4.5-20250514", // Latest Claude Sonnet 4.5
-      "claude-opus-4.5-20250514", // Latest Claude Opus 4.5 (most advanced)
-      "claude-sonnet-4-20250514", // Claude Sonnet 4
-      "claude-3-5-sonnet-20241022", // Claude 3.5 Sonnet (deprecated but may still work)
-      "claude-3-5-sonnet-20240620", // Older Claude 3.5 Sonnet
+      "claude-3-5-sonnet-20241022", // Start with known working model
+      "claude-3-5-sonnet-20240620", // Fallback to older version
+      "claude-3-opus-20240229", // Opus as last resort
     ]
 
     let lastError: any = null
