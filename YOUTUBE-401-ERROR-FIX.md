@@ -9,6 +9,22 @@
 3. The Client ID is from a different Google Cloud project
 4. The Client ID is not being sent correctly
 
+## Important: Check Your Redirect URI
+
+I notice your redirect URI in the screenshot appears to be truncated. Make sure it's the **complete URL**:
+
+**Should be:**
+```
+https://content-command-center-lvoldojv2-austins-projects-c461c44a.vercel.app/api/youtube/callback
+```
+
+**Not:**
+```
+https://content-command-center-lvoldojv2-austins-projects-c461c44a.
+```
+
+Make sure the redirect URI ends with `/api/youtube/callback` and includes the full domain.
+
 ## Quick Fix Steps
 
 ### Step 1: Verify Your Client ID
