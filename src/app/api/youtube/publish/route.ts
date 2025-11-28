@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     // Get user's YouTube tokens
     const { data: profiles } = await supabase
       .from("profiles")
-      .select("metadata")
+      .select("id, metadata")
       .limit(1)
 
     if (!profiles || profiles.length === 0 || !profiles[0]?.metadata?.youtube) {
@@ -78,27 +78,19 @@ export async function POST(request: NextRequest) {
       accessToken = refreshed.access_token
 
       // Update stored token
-      const { data: currentProfile } = await supabase
+      await supabase
         .from("profiles")
-        .select("id, metadata")
-        .eq("id", profile.id)
-        .single()
-
-      if (currentProfile) {
-        await supabase
-          .from("profiles")
-          .update({
-            metadata: {
-              ...(currentProfile.metadata || {}),
-              youtube: {
-                ...youtubeTokens,
-                access_token: refreshed.access_token,
-                expires_at: new Date(Date.now() + refreshed.expires_in * 1000).toISOString(),
-              },
+        .update({
+          metadata: {
+            ...(profile.metadata || {}),
+            youtube: {
+              ...youtubeTokens,
+              access_token: refreshed.access_token,
+              expires_at: new Date(Date.now() + refreshed.expires_in * 1000).toISOString(),
             },
-          })
-          .eq("id", profile.id)
-      }
+          },
+        })
+        .eq("id", profile.id)
     }
 
     // Upload to YouTube (function handles downloading from URL)
