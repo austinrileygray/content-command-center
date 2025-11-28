@@ -34,11 +34,16 @@
 
 ### Step 1: Configure Redirect URI
 
-1. In Google Cloud Console, edit your OAuth 2.0 Client
-2. Under **Authorized redirect URIs**, add:
-   - **Production:** `https://your-vercel-app.vercel.app/api/youtube/callback`
+📖 **Detailed instructions:** See `YOUTUBE-REDIRECT-URI-SETUP.md` for step-by-step guide
+
+**Quick steps:**
+1. Go to [Google Cloud Console](https://console.cloud.google.com/) → APIs & Services → Credentials
+2. Find your OAuth 2.0 Client ID: `66319413166-14e0viqsh4hefie1q2nqu62u1rkn0j0v.apps.googleusercontent.com`
+3. Click Edit (pencil icon)
+4. Under **Authorized redirect URIs**, add:
+   - **Production:** `https://content-command-center-ew6bkbv58-austins-projects-c461c44a.vercel.app/api/youtube/callback`
    - **Local:** `http://localhost:3000/api/youtube/callback`
-3. Save changes
+5. Click **SAVE**
 
 ### Step 2: Environment Variables
 
