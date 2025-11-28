@@ -23,7 +23,16 @@ export async function GET(request: NextRequest) {
     
     // Log for debugging (remove in production if needed)
     console.log("YouTube OAuth - Redirect URI:", redirectUri)
-    console.log("YouTube OAuth - Client ID:", clientId)
+    console.log("YouTube OAuth - Client ID:", clientId?.substring(0, 20) + "...") // Log partial for security
+    
+    // Validate Client ID format
+    if (!clientId.includes('.apps.googleusercontent.com')) {
+      console.error("Invalid Client ID format - should end with .apps.googleusercontent.com")
+      return NextResponse.json(
+        { error: "Invalid Client ID format" },
+        { status: 500 }
+      )
+    }
     
     const authUrl = getYouTubeAuthUrl(redirectUri, clientId)
 
