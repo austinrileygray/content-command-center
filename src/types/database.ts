@@ -154,3 +154,27 @@ export interface ThumbnailConcept {
   emotionToConvey: string
   colorScheme: string[]
 }
+
+export interface ThumbnailTraining {
+  id: string
+  user_id: string
+  category: "youtube" | "short_form"
+  image_url: string
+  source_type: "manual" | "youtube_auto" | "external"
+  source_video_id: string | null
+  source_video_title: string | null
+  source_video_url: string | null
+  performance_metrics: {
+    views?: number
+    likes?: number
+    comments?: number
+    engagement_rate?: number
+    ctr?: number
+    [key: string]: any
+  } | null
+  tags: string[] | null
+  notes: string | null
+  approved: boolean
+  created_at: string
+  updated_at: string
+}

@@ -147,6 +147,26 @@ CREATE TABLE analytics_snapshots (
 );
 
 -- ============================================
+-- THUMBNAIL TRAINING DATA
+-- ============================================
+CREATE TABLE thumbnail_training (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  category TEXT NOT NULL CHECK (category IN ('youtube', 'short_form')),
+  image_url TEXT NOT NULL,
+  source_type TEXT NOT NULL CHECK (source_type IN ('manual', 'youtube_auto', 'external')),
+  source_video_id TEXT, -- YouTube video ID if auto-collected
+  source_video_title TEXT,
+  source_video_url TEXT,
+  performance_metrics JSONB, -- views, engagement, etc. if from YouTube
+  tags TEXT[],
+  notes TEXT,
+  approved BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ============================================
 -- INDEXES
 -- ============================================
 CREATE INDEX idx_content_ideas_status ON content_ideas(status);
@@ -156,6 +176,9 @@ CREATE INDEX idx_guests_status ON guests(status);
 CREATE INDEX idx_recordings_content ON recordings(content_idea_id);
 CREATE INDEX idx_assets_content ON assets(content_idea_id);
 CREATE INDEX idx_publishing_status ON publishing_queue(status);
+CREATE INDEX idx_thumbnail_training_category ON thumbnail_training(category);
+CREATE INDEX idx_thumbnail_training_user ON thumbnail_training(user_id);
+CREATE INDEX idx_thumbnail_training_approved ON thumbnail_training(approved);
 
 -- ============================================
 -- UPDATED_AT TRIGGER
@@ -173,6 +196,7 @@ CREATE TRIGGER content_ideas_updated_at BEFORE UPDATE ON content_ideas FOR EACH 
 CREATE TRIGGER guests_updated_at BEFORE UPDATE ON guests FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER recordings_updated_at BEFORE UPDATE ON recordings FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER assets_updated_at BEFORE UPDATE ON assets FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER thumbnail_training_updated_at BEFORE UPDATE ON thumbnail_training FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- ============================================
 -- INSERT DEFAULT USER (for testing)

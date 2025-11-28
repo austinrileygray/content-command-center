@@ -23,6 +23,7 @@ import {
   Search,
   Radio,
   Users,
+  Image as ImageIcon,
 } from "lucide-react"
 
 const commands = [
@@ -33,8 +34,9 @@ const commands = [
       { id: "ideas", label: "Go to Ideas", icon: Lightbulb, href: "/ideas", shortcut: "⌘K I" },
       { id: "record", label: "Go to Record", icon: Video, href: "/record", shortcut: "⌘K R" },
       { id: "recordings", label: "Go to Recordings", icon: Radio, href: "/recordings", shortcut: "⌘K O" },
-      { id: "assets", label: "Go to Assets", icon: Package, href: "/assets", shortcut: "⌘K A" },
-      { id: "publish", label: "Go to Publish", icon: Send, href: "/publish", shortcut: "⌘K P" },
+            { id: "assets", label: "Go to Assets", icon: Package, href: "/assets", shortcut: "⌘K A" },
+            { id: "thumbnails", label: "Go to Thumbnails", icon: ImageIcon, href: "/thumbnails", shortcut: "⌘K T" },
+            { id: "publish", label: "Go to Publish", icon: Send, href: "/publish", shortcut: "⌘K P" },
       { id: "analytics", label: "Go to Analytics", icon: BarChart3, href: "/analytics", shortcut: "⌘K Y" },
       { id: "settings", label: "Go to Settings", icon: Settings, href: "/settings", shortcut: "⌘K ," },
     ],
