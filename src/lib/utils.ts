@@ -47,3 +47,48 @@ export function getStatusLabel(status: string): string {
   }
   return labels[status] || status
 }
+
+/**
+ * Get the base URL for the application
+ * Prioritizes custom domain, then falls back to request origin
+ */
+export function getBaseUrl(request?: {
+  headers?: Headers | { get: (key: string) => string | null }
+  nextUrl?: { origin: string; host: string }
+}): string {
+  // First, check for explicit environment variable (priority)
+  const customDomain = process.env.NEXT_PUBLIC_APP_URL
+  
+  // If custom domain is set and is a full URL, use it
+  if (customDomain && customDomain.startsWith('http')) {
+    return customDomain.replace(/\/$/, '') // Remove trailing slash
+  }
+  
+  // If custom domain is just a domain name, add https
+  if (customDomain && !customDomain.includes('://')) {
+    return `https://${customDomain.replace(/\/$/, '')}`
+  }
+  
+  // For production, always use contentmotor.co (hardcoded fallback)
+  // This ensures consistency with Google Cloud Console configuration
+  if (process.env.VERCEL_ENV === 'production' || !customDomain) {
+    return 'https://contentmotor.co'
+  }
+  
+  // Try to get from request headers (for server-side)
+  if (request?.headers) {
+    const host = request.headers.get('host')
+    const protocol = request.headers.get('x-forwarded-proto') || 'https'
+    if (host) {
+      return `${protocol}://${host}`
+    }
+  }
+  
+  // Try to get from Next.js URL (for App Router)
+  if (request?.nextUrl) {
+    return request.nextUrl.origin
+  }
+  
+  // Fallback to localhost for development
+  return 'http://localhost:3000'
+}
