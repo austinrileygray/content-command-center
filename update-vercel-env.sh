@@ -6,6 +6,7 @@
 echo "📝 Updating Vercel Environment Variables..."
 
 # Create temp files with values
+# NOTE: Replace these with actual values from .env.local
 echo "YOUR_YOUTUBE_CLIENT_ID_HERE" > /tmp/youtube_client_id.txt
 echo "YOUR_YOUTUBE_CLIENT_SECRET_HERE" > /tmp/youtube_client_secret.txt
 echo "YOUR_GEMINI_API_KEY_HERE" > /tmp/gemini_api_key.txt

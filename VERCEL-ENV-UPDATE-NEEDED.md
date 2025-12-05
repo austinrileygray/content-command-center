@@ -9,17 +9,17 @@
 You need to update these environment variables in your Vercel dashboard:
 
 ### 1. **YOUTUBE_CLIENT_ID** (Updated)
-- **Old value**: `66319413166-14e0viqsh4hefie1q2nqu62u1rkn0j0v.apps.googleusercontent.com`
-- **New value**: `YOUR_YOUTUBE_CLIENT_ID_HERE`
+- **Old value**: (see `.env.local` for reference)
+- **New value**: (see `.env.local` for current value)
 - **Environments**: Production, Preview, Development
 
 ### 2. **YOUTUBE_CLIENT_SECRET** (Updated)
-- **Old value**: `YOUR_YOUTUBE_CLIENT_SECRET_HERE`
-- **New value**: `YOUR_YOUTUBE_CLIENT_SECRET_HERE`
+- **Old value**: (see `.env.local` for reference)
+- **New value**: (see `.env.local` for current value)
 - **Environments**: Production, Preview, Development
 
 ### 3. **GEMINI_API_KEY** (New - Add This!)
-- **Value**: `YOUR_GEMINI_API_KEY_HERE`
+- **Value**: (see `.env.local` for current value)
 - **Environments**: Production, Preview, Development
 
 ## 📝 How to Update in Vercel Dashboard
