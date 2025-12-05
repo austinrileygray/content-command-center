@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Plus, Mail, Linkedin, Twitter, Building, Briefcase, Edit, Trash2 } from "lucide-react"
+import { Plus, Mail, Linkedin, Twitter, Building, Briefcase, Edit, Trash2, Users } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
 import { Guest } from "@/types/database"
 import { createClient } from "@/lib/supabase/client"
@@ -15,6 +15,7 @@ import { GuestForm } from "@/components/guests/guest-form"
 
 interface GuestsClientProps {
   initialGuests: Guest[]
+  showEmptyState?: boolean
 }
 
 const statusColors: Record<string, string> = {
@@ -24,7 +25,24 @@ const statusColors: Record<string, string> = {
   declined: "bg-red-500/20 text-red-400",
 }
 
-export function GuestsClient({ initialGuests }: GuestsClientProps) {
+export function GuestsClient({ initialGuests, showEmptyState }: GuestsClientProps) {
+  // Show empty state if requested
+  if (showEmptyState) {
+    return (
+      <Card className="p-12 bg-card border-border">
+        <div className="flex flex-col items-center justify-center text-center">
+          <div className="p-4 rounded-full bg-secondary mb-4">
+            <Users className="w-8 h-8 text-muted-foreground" />
+          </div>
+          <h3 className="text-lg font-semibold text-foreground mb-2">No guests yet</h3>
+          <p className="text-sm text-muted-foreground max-w-md mb-6">
+            Add guests to schedule interviews and create guest content.
+          </p>
+        </div>
+      </Card>
+    )
+  }
+
   const router = useRouter()
   const supabase = createClient()
   const [guests, setGuests] = useState(initialGuests)

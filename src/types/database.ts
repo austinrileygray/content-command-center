@@ -46,6 +46,7 @@ export interface ContentIdea {
   seo_keywords: string[] | null
   why_this_will_work: string | null
   source_inspiration: string | null
+  source_video_id: string | null      // YouTube video ID that inspired this idea
   guest_id: string | null
   scheduled_date: string | null
   scheduled_time: string | null
@@ -155,6 +156,7 @@ export interface ThumbnailConcept {
   colorScheme: string[]
 }
 
+// From master branch - Thumbnail Training
 export interface ThumbnailTraining {
   id: string
   user_id: string
@@ -179,6 +181,7 @@ export interface ThumbnailTraining {
   updated_at: string
 }
 
+// From master branch - YouTube Video Analytics
 export interface YouTubeVideo {
   id: string
   user_id: string
@@ -209,6 +212,7 @@ export interface YouTubeVideo {
   updated_at: string
 }
 
+// From master branch - Content Patterns
 export interface ContentPattern {
   id: string
   user_id: string
@@ -219,6 +223,86 @@ export interface ContentPattern {
   video_count: number | null
   average_performance_score: number | null
   last_analyzed_at: string
+  created_at: string
+  updated_at: string
+}
+
+// YouTube OAuth Connection
+export interface YouTubeConnection {
+  id: string
+  channel_id: string
+  channel_title: string
+  channel_thumbnail: string | null
+  access_token: string
+  refresh_token: string | null
+  token_expires_at: string
+  scope: string | null
+  created_at: string
+  updated_at: string
+}
+
+// Thumbnail Generation Types
+export type IngredientType = 'face' | 'inspiration' | 'logo' | 'background' | 'other'
+
+export interface ThumbnailIngredient {
+  id: string
+  user_id: string
+  name: string
+  type: IngredientType
+  file_url: string
+  thumbnail_url: string | null
+  metadata: Record<string, any>
+  created_at: string
+  updated_at: string
+}
+
+export type ThumbnailStatus = 'pending' | 'generating' | 'completed' | 'failed'
+
+export interface GeneratedThumbnail {
+  id: string
+  user_id: string
+  content_idea_id: string | null
+  prompt: string
+  style: string | null
+  aspect_ratio: string
+  ingredients_used: string[]
+  result_url: string | null
+  result_thumbnail_url: string | null
+  status: ThumbnailStatus
+  error_message: string | null
+  metadata: Record<string, any>
+  created_at: string
+  updated_at: string
+}
+
+// Viral Clip Analysis Types
+export type ViralClipAnalysisStatus = 'pending' | 'processing' | 'completed' | 'failed'
+
+export interface ViralClip {
+  startTime: number
+  endTime: number
+  duration: number
+  score: number
+  reason: string
+  hook: string
+  suggestedCaption: string
+  emotionalPeak: string
+  thumbnailTimestamp: number
+}
+
+export interface ViralClipAnalysis {
+  id: string
+  user_id: string
+  video_id: string
+  video_url: string | null
+  video_title: string | null
+  clips: ViralClip[]
+  video_summary: string | null
+  overall_viral_potential: number | null
+  target_audience: string | null
+  content_category: string | null
+  status: ViralClipAnalysisStatus
+  error_message: string | null
   created_at: string
   updated_at: string
 }

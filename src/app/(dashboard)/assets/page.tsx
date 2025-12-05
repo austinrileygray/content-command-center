@@ -1,14 +1,13 @@
 import { createClient } from "@/lib/supabase/server"
 import { PageHeader } from "@/components/shared/page-header"
-import { EmptyState } from "@/components/shared/empty-state"
-import { Package } from "lucide-react"
 import { AssetsClient } from "./assets-client"
 
 export default async function AssetsPage({
   searchParams,
 }: {
-  searchParams: { idea?: string }
+  searchParams: Promise<{ idea?: string }>
 }) {
+  const { idea: ideaId } = await searchParams
   const supabase = await createClient()
 
   let query = supabase
@@ -16,19 +15,19 @@ export default async function AssetsPage({
     .select("*")
 
   // Filter by content idea if provided
-  if (searchParams?.idea) {
-    query = query.eq("content_idea_id", searchParams.idea)
+  if (ideaId) {
+    query = query.eq("content_idea_id", ideaId)
   }
 
   const { data: assets } = await query.order("created_at", { ascending: false })
 
   // Get idea title if filtering
   let ideaTitle: string | null = null
-  if (searchParams?.idea) {
+  if (ideaId) {
     const { data: idea } = await supabase
       .from("content_ideas")
       .select("title")
-      .eq("id", searchParams.idea)
+      .eq("id", ideaId)
       .single()
     ideaTitle = idea?.title || null
   }
@@ -44,15 +43,7 @@ export default async function AssetsPage({
         }
       />
 
-      {!assets || assets.length === 0 ? (
-        <EmptyState
-          icon={Package}
-          title="No assets yet"
-          description="Assets will appear here once content is processed and clips are generated."
-        />
-      ) : (
-        <AssetsClient initialAssets={assets} />
-      )}
+      <AssetsClient initialAssets={assets || []} showEmptyState={!assets || assets.length === 0} />
     </div>
   )
 }

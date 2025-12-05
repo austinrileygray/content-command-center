@@ -36,6 +36,7 @@ interface Recording {
 
 interface RecordingsClientProps {
   initialRecordings: Recording[]
+  showEmptyState?: boolean
 }
 
 const statusColors: Record<string, string> = {
@@ -52,7 +53,24 @@ const platformIcons: Record<string, any> = {
   restream: Video,
 }
 
-export function RecordingsClient({ initialRecordings }: RecordingsClientProps) {
+export function RecordingsClient({ initialRecordings, showEmptyState }: RecordingsClientProps) {
+  // Show empty state if requested
+  if (showEmptyState) {
+    return (
+      <Card className="p-12 bg-card border-border">
+        <div className="flex flex-col items-center justify-center text-center">
+          <div className="p-4 rounded-full bg-secondary mb-4">
+            <Video className="w-8 h-8 text-muted-foreground" />
+          </div>
+          <h3 className="text-lg font-semibold text-foreground mb-2">No recordings yet</h3>
+          <p className="text-sm text-muted-foreground max-w-md mb-6">
+            Recordings will appear here once you start recording content via Loom, SquadCast, or Restream.
+          </p>
+        </div>
+      </Card>
+    )
+  }
+
   const supabase = createClient()
   const [recordings, setRecordings] = useState(initialRecordings)
   const [searchQuery, setSearchQuery] = useState("")

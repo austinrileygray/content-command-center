@@ -15,6 +15,7 @@ import {
   Users,
   Radio,
   Image as ImageIcon,
+  Scissors,
 } from "lucide-react"
 
 const navigation = [
@@ -26,6 +27,7 @@ const navigation = [
   { name: "Assets", href: "/assets", icon: Package },
   { name: "Thumbnails", href: "/thumbnails", icon: ImageIcon },
   { name: "Prompts", href: "/thumbnails/prompts", icon: ImageIcon },
+  { name: "Viral Clips", href: "/viral-clips", icon: Scissors },
   { name: "Publish", href: "/publish", icon: Send },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
 ]
@@ -66,10 +68,8 @@ export function Sidebar() {
               // Child route - only active if this is the parent
               // But exclude if we're on a sibling route
               // Example: /thumbnails should NOT be active when on /thumbnails/prompts
-              const nextSegment = pathname.slice(item.href.length + 1).split("/")[0]
-              // Only highlight if there's no conflicting parent route
-              const hasConflictingParent = navigation.some(nav => 
-                nav.href !== item.href && 
+              const hasConflictingParent = navigation.some(nav =>
+                nav.href !== item.href &&
                 nav.href.startsWith(item.href) &&
                 pathname.startsWith(nav.href)
               )

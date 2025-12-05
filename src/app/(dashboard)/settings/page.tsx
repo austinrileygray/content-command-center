@@ -7,56 +7,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
-import { User, Video, Bell, Key, CheckCircle, ExternalLink } from "lucide-react"
-import { useSearchParams } from "next/navigation"
-import { toast } from "sonner"
+import { User, Video, Bell, Key } from "lucide-react"
+import { YouTubeConnection } from "@/components/settings/youtube-connection"
 
 function SettingsContent() {
-  const searchParams = useSearchParams()
-  const [youtubeConnected, setYoutubeConnected] = useState(false)
-  const [connecting, setConnecting] = useState(false)
-
-  useEffect(() => {
-    // Check if YouTube is connected
-    // This would check the profile metadata in a real implementation
-    const connected = searchParams.get("youtube_connected") === "true"
-    if (connected) {
-      setYoutubeConnected(true)
-      toast.success("YouTube connected successfully!")
-    }
-
-    const error = searchParams.get("error")
-    if (error) {
-      toast.error(`YouTube connection failed: ${error}`)
-    }
-  }, [searchParams])
-
-  const connectYouTube = async () => {
-    setConnecting(true)
-    try {
-      const response = await fetch("/api/youtube/auth")
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to initiate YouTube auth")
-      }
-
-      if (data.authUrl) {
-        // Log redirect URI for debugging
-        console.log("Redirect URI being used:", data.redirectUri)
-        window.location.href = data.authUrl
-      } else {
-        throw new Error(data.error || "Failed to initiate YouTube auth")
-      }
-    } catch (error: any) {
-      console.error("YouTube connection error:", error)
-      toast.error(error.message || "Failed to connect YouTube")
-      setConnecting(false)
-    }
-  }
-
   // Note: Profile fetching moved to client component if needed
   // For now, using static values
   const profile = {
@@ -191,39 +146,16 @@ function SettingsContent() {
             </div>
 
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
+              <Suspense fallback={
+                <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                  <div>
                     <h4 className="font-medium text-foreground">YouTube</h4>
-                    {youtubeConnected && (
-                      <CheckCircle className="w-4 h-4 text-green-400" />
-                    )}
+                    <p className="text-sm text-muted-foreground">Loading...</p>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    {youtubeConnected
-                      ? "Connected - Ready to publish videos"
-                      : "Connect to publish videos directly to YouTube"}
-                  </p>
                 </div>
-                <Button
-                  variant={youtubeConnected ? "outline" : "default"}
-                  size="sm"
-                  onClick={connectYouTube}
-                  disabled={connecting}
-                  className={youtubeConnected ? "gap-2" : ""}
-                >
-                  {connecting
-                    ? "Connecting..."
-                    : youtubeConnected
-                    ? (
-                        <>
-                          <CheckCircle className="w-4 h-4" />
-                          Connected
-                        </>
-                      )
-                    : "Connect"}
-                </Button>
-              </div>
+              }>
+                <YouTubeConnection />
+              </Suspense>
 
               <div className="flex items-center justify-between p-4 border border-border rounded-lg">
                 <div>

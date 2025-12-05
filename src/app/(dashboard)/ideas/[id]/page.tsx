@@ -5,14 +5,15 @@ import { IdeaDetailClient } from "./idea-detail-client"
 export default async function IdeaDetailPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
+  const { id } = await params
   const supabase = await createClient()
-  
+
   const { data: idea } = await supabase
     .from("content_ideas")
     .select("*, guest:guests(*)")
-    .eq("id", params.id)
+    .eq("id", id)
     .single()
 
   if (!idea) {

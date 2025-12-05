@@ -1,7 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
 import { PageHeader } from "@/components/shared/page-header"
-import { EmptyState } from "@/components/shared/empty-state"
-import { Video } from "lucide-react"
 import { RecordingsClient } from "./recordings-client"
 
 export default async function RecordingsPage() {
@@ -19,15 +17,7 @@ export default async function RecordingsPage() {
         description="Manage and track all your content recordings"
       />
 
-      {!recordings || recordings.length === 0 ? (
-        <EmptyState
-          icon={Video}
-          title="No recordings yet"
-          description="Recordings will appear here once you start recording content via Loom, SquadCast, or Restream."
-        />
-      ) : (
-        <RecordingsClient initialRecordings={recordings} />
-      )}
+      <RecordingsClient initialRecordings={recordings || []} showEmptyState={!recordings || recordings.length === 0} />
     </div>
   )
 }

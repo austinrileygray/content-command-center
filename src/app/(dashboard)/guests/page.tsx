@@ -1,7 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
 import { PageHeader } from "@/components/shared/page-header"
-import { EmptyState } from "@/components/shared/empty-state"
-import { Users } from "lucide-react"
 import { GuestsClient } from "./guests-client"
 
 export default async function GuestsPage() {
@@ -19,15 +17,7 @@ export default async function GuestsPage() {
         description="Manage your guest interview pipeline"
       />
 
-      {!guests || guests.length === 0 ? (
-        <EmptyState
-          icon={Users}
-          title="No guests yet"
-          description="Add guests to schedule interviews and create guest content."
-        />
-      ) : (
-        <GuestsClient initialGuests={guests} />
-      )}
+      <GuestsClient initialGuests={guests || []} showEmptyState={!guests || guests.length === 0} />
     </div>
   )
 }

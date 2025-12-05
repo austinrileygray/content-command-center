@@ -13,7 +13,7 @@ import { IdeaForm } from "@/components/ideas/idea-form"
 import { BlogGenerator } from "@/components/content/blog-generator"
 import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
-import { Edit, Trash2, ArrowRight, Calendar, Clock, Video, Users, Radio, Scissors, Sparkles, Package, ExternalLink, TrendingUp, Play, FileText, Mail } from "lucide-react"
+import { Edit, Trash2, ArrowRight, Calendar, Clock, Video, Users, Radio, Scissors, Sparkles, ExternalLink, TrendingUp, Play, Image } from "lucide-react"
 import { CONTENT_STATUSES, SUBMAGIC_TEMPLATES } from "@/lib/constants"
 import {
   DropdownMenu,
@@ -593,6 +593,52 @@ export function IdeaDetailClient({ idea: initialIdea }: IdeaDetailClientProps) {
                 </div>
               </Card>
             )}
+
+            {/* Thumbnail Generation */}
+            <Card className="p-6 bg-card border-border">
+              <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                <Image className="w-5 h-5 text-brand" />
+                Thumbnail
+              </h2>
+              {idea.thumbnail_concept ? (
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Main Text</p>
+                    <p className="text-foreground font-medium">{idea.thumbnail_concept.mainText}</p>
+                  </div>
+                  {idea.thumbnail_concept.subText && (
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-1">Sub Text</p>
+                      <p className="text-sm text-foreground">{idea.thumbnail_concept.subText}</p>
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Visual Description</p>
+                    <p className="text-xs text-foreground">{idea.thumbnail_concept.visualDescription}</p>
+                  </div>
+                  <Button
+                    className="w-full bg-brand hover:bg-brand/90"
+                    onClick={() => router.push(`/thumbnails?ideaId=${idea.id}&prompt=${encodeURIComponent(idea.thumbnail_concept?.visualDescription || idea.title)}`)}
+                  >
+                    <Image className="w-4 h-4 mr-2" />
+                    Generate Thumbnail
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    Create an eye-catching thumbnail for this content idea.
+                  </p>
+                  <Button
+                    className="w-full bg-brand hover:bg-brand/90"
+                    onClick={() => router.push(`/thumbnails?ideaId=${idea.id}&prompt=${encodeURIComponent(idea.title)}`)}
+                  >
+                    <Image className="w-4 h-4 mr-2" />
+                    Create Thumbnail
+                  </Button>
+                </div>
+              )}
+            </Card>
 
             {/* Generated Assets */}
             <Card className="p-6 bg-card border-border">

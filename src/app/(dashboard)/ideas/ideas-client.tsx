@@ -19,6 +19,7 @@ import { Download } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
 import { AIIdeaGenerator } from "@/components/ideas/ai-idea-generator"
+import { AnalyticsIdeaGenerator } from "@/components/ideas/analytics-idea-generator"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -143,7 +144,8 @@ export function IdeasPageClient({ initialIdeas }: IdeasPageClientProps) {
         description="Manage your content pipeline"
         actions={
           <>
-          <AIIdeaGenerator />
+            <AIIdeaGenerator />
+            <AnalyticsIdeaGenerator />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="gap-2">

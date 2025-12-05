@@ -21,7 +21,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
-import { Download, ExternalLink, FileVideo, Image, FileText, Share2, Mail, Clock, TrendingUp, Play, Check, X, Search, Filter, CheckSquare, Square, Send, CalendarIcon, Copy } from "lucide-react"
+import { Download, ExternalLink, FileVideo, Image, FileText, Share2, Mail, Clock, TrendingUp, Play, Check, X, Search, Filter, CheckSquare, Square, Send, CalendarIcon, Copy, Package } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
 import { Asset } from "@/types/database"
 import { createClient } from "@/lib/supabase/client"
@@ -36,6 +36,7 @@ import {
 
 interface AssetsClientProps {
   initialAssets: Asset[]
+  showEmptyState?: boolean
 }
 
 const assetTypeIcons = {
@@ -62,7 +63,24 @@ const statusColors: Record<string, string> = {
   failed: "bg-red-500/20 text-red-400",
 }
 
-export function AssetsClient({ initialAssets }: AssetsClientProps) {
+export function AssetsClient({ initialAssets, showEmptyState }: AssetsClientProps) {
+  // Show empty state if requested
+  if (showEmptyState) {
+    return (
+      <Card className="p-12 bg-card border-border">
+        <div className="flex flex-col items-center justify-center text-center">
+          <div className="p-4 rounded-full bg-secondary mb-4">
+            <Package className="w-8 h-8 text-muted-foreground" />
+          </div>
+          <h3 className="text-lg font-semibold text-foreground mb-2">No assets yet</h3>
+          <p className="text-sm text-muted-foreground max-w-md mb-6">
+            Assets will appear here once content is processed and clips are generated.
+          </p>
+        </div>
+      </Card>
+    )
+  }
+
   const router = useRouter()
   const supabase = createClient()
   const [assets, setAssets] = useState(initialAssets)
