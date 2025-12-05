@@ -62,16 +62,20 @@ export async function POST(request: NextRequest) {
         .single()
 
       if (recording?.editing_prompt) {
-        editingPrompt = recording.editing_prompt
+        editingPrompt = Array.isArray(recording.editing_prompt) 
+          ? recording.editing_prompt[0] 
+          : recording.editing_prompt
       }
       if (recording?.editing_job) {
-        editingJob = recording.editing_job
+        editingJob = Array.isArray(recording.editing_job) 
+          ? recording.editing_job[0] 
+          : recording.editing_job
       }
     }
 
     // STEP 1: Send to Editing Service for long-form editing (if editing job exists and not already processed)
     if (editingJobId || editingJob) {
-      const jobId = editingJobId || editingJob?.id
+      const jobId = editingJobId || (editingJob && typeof editingJob === 'object' && 'id' in editingJob ? editingJob.id : null)
       
       // Check if editing is already completed
       if (editingJob?.status === 'ready_for_review' && editingJob?.versions && Array.isArray(editingJob.versions) && editingJob.versions.length > 0) {
