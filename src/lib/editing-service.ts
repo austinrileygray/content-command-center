@@ -134,11 +134,7 @@ export function getEditingServiceClient(): EditingServiceClient {
   return editingServiceClient
 }
 
-export type {
-  EditingServiceResponse,
-  EditingServiceVersion,
-  EditingServiceStatus,
-}
+// Types are already exported as interfaces above, no need to re-export
 
 
 
