@@ -74,11 +74,14 @@ export async function POST(request: NextRequest) {
     }
 
     // STEP 1: Send to Editing Service for long-form editing (if editing job exists and not already processed)
-    if (editingJobId || editingJob) {
-      const jobId = editingJobId || (editingJob && typeof editingJob === 'object' && 'id' in editingJob ? editingJob.id : null)
+    // Ensure editingJob is an object, not an array
+    const editingJobObj = editingJob && typeof editingJob === 'object' && !Array.isArray(editingJob) ? editingJob : null
+    
+    if (editingJobId || editingJobObj) {
+      const jobId = editingJobId || editingJobObj?.id || null
       
       // Check if editing is already completed
-      if (editingJob?.status === 'ready_for_review' && editingJob?.versions && Array.isArray(editingJob.versions) && editingJob.versions.length > 0) {
+      if (editingJobObj?.status === 'ready_for_review' && editingJobObj?.versions && Array.isArray(editingJobObj.versions) && editingJobObj.versions.length > 0) {
         // Editing already complete, skip to Submagic
         console.log('Editing already completed, proceeding to clip generation')
       } else {
@@ -88,8 +91,8 @@ export async function POST(request: NextRequest) {
           const editingClient = getEditingServiceClient()
           
           // Get the prompt to use (video-specific or master)
-          const promptToUse = editingJob?.video_specific_prompt_id 
-            ? await supabase.from('video_specific_prompts').select('prompt_text').eq('id', editingJob.video_specific_prompt_id).single()
+          const promptToUse = editingJobObj?.video_specific_prompt_id 
+            ? await supabase.from('video_specific_prompts').select('prompt_text').eq('id', editingJobObj.video_specific_prompt_id).single()
             : editingPrompt 
               ? { data: { prompt_text: editingPrompt.prompt_text } }
               : null
