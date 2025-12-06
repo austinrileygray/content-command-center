@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(npm run build:*)",
+      "WebFetch(domain:ai.google.dev)",
+      "WebFetch(domain:dev.to)",
+      "Bash(npm install:*)",
+      "Bash(dir \"C:\\Users\\samda\\OneDrive\\Documents\\GitHub\\photostudio\\ai-photo-studio\\src\")",
+      "Bash(git rm:*)",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)",
+      "Bash(head:*)",
+      "Bash(git stash:*)",
+      "Bash(git commit:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

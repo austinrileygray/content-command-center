@@ -279,3 +279,5 @@ ${paragraphs.slice(4, 6).map((p) => `- ${p.replace(/\.$/, "")}\n`).join("")}
 *This newsletter was automatically generated from a video transcript.*`
   }
 }
+
+

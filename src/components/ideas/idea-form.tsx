@@ -277,3 +277,5 @@ export function IdeaForm({ open, onOpenChange, idea }: IdeaFormProps) {
     </Dialog>
   )
 }
+
+

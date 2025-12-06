@@ -53,3 +53,5 @@ WITH CHECK (true);
 
 -- Note: For service role operations (API routes), we'll use service role key which bypasses RLS
 -- These policies are for authenticated user access
+
+

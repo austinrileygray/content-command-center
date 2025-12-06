@@ -48,3 +48,5 @@ If the script doesn't work, use the manual setup in `SETUP-SUPABASE-STORAGE.md`.
 ### Bucket Created But Policies Fail
 - Make sure you're running the SQL in the correct Supabase project
 - Check that you have admin access to the project
+
+

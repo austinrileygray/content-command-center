@@ -80,3 +80,5 @@ export function IdeaCard({ idea }: IdeaCardProps) {
     </Link>
   )
 }
+
+

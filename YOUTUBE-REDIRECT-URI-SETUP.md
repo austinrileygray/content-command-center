@@ -98,3 +98,5 @@ Once configured, you can:
 4. After authorizing, you'll be redirected back to your app
 
 The redirect URI you configured is where Google will send users after they authorize your app.
+
+

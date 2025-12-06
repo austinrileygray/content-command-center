@@ -153,3 +153,5 @@ function generateTemplateIdeas(prompt: string) {
     },
   ]
 }
+
+

@@ -76,3 +76,5 @@ After you set up the database password, I can automatically execute:
 3. **Tell me:** "Setup complete" or "Ready for auto-execution"
 
 Then I can update your database automatically without asking for approval! 🚀
+
+

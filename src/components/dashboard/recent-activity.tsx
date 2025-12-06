@@ -35,3 +35,5 @@ export function RecentActivity({ ideas }: RecentActivityProps) {
     </Card>
   )
 }
+
+

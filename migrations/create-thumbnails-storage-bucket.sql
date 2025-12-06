@@ -36,3 +36,5 @@ CREATE POLICY "Allow users to delete own files"
 ON storage.objects FOR DELETE
 TO authenticated
 USING (bucket_id = 'thumbnails' AND (storage.foldername(name))[1] = auth.uid()::text);
+
+

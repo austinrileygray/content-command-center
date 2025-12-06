@@ -22,3 +22,5 @@ export default async function IdeaDetailPage({
 
   return <IdeaDetailClient idea={idea} />
 }
+
+

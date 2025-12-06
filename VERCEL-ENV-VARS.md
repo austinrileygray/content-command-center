@@ -62,3 +62,5 @@ npx vercel env add ANTHROPIC_API_KEY production
 - Environment: Production, Preview, Development (all)
 - Description: YouTube OAuth Client Secret (required for OAuth flow)
 - Status: ✅ Added to Vercel production environment
+
+

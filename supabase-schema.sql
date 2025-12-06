@@ -263,3 +263,5 @@ SELECT
 FROM profiles LIMIT 1;
 
 SELECT 'Database setup complete!' as status;
+
+

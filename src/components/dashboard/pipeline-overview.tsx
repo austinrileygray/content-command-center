@@ -63,3 +63,5 @@ export function PipelineOverview({ ideas }: PipelineOverviewProps) {
     </Card>
   )
 }
+
+

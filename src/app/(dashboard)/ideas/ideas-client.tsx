@@ -528,3 +528,5 @@ export function IdeasPageClient({ initialIdeas }: IdeasPageClientProps) {
     </div>
   )
 }
+
+

@@ -159,3 +159,5 @@ export function PipelineBoardEnhanced({ ideas }: PipelineBoardEnhancedProps) {
     </div>
   )
 }
+
+
