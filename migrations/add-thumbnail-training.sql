@@ -31,3 +31,5 @@ CREATE TRIGGER thumbnail_training_updated_at
   BEFORE UPDATE ON thumbnail_training 
   FOR EACH ROW 
   EXECUTE FUNCTION update_updated_at();
+
+

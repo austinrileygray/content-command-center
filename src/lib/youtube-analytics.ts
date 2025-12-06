@@ -127,3 +127,5 @@ export function calculateCTR(views: number, impressions?: number): number | unde
   if (!impressions || impressions === 0) return undefined
   return Math.round((views / impressions) * 100 * 100) / 100
 }
+
+

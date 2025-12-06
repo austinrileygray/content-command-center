@@ -524,3 +524,5 @@ function generateBasicIdeas(prompt: string): Partial<ContentIdea>[] {
 
   return baseIdeas
 }
+
+

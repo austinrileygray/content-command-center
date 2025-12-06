@@ -42,3 +42,5 @@ export const SUBMAGIC_TEMPLATES = [
   { value: "Ali", label: "Ali Abdaal Style", description: "Minimal, educational look" },
   { value: "Sara", label: "Sara (Default)", description: "Balanced, versatile style" },
 ] as const
+
+

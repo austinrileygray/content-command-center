@@ -103,3 +103,5 @@ YOUTUBE_CLIENT_SECRET=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
 - Client Secret should NEVER be committed to git
 - Store securely in Vercel environment variables
 - Tokens are stored in database metadata (consider dedicated table for production)
+
+

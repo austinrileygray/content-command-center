@@ -100,3 +100,5 @@ CREATE INDEX IF NOT EXISTS idx_notes_analysis_user_category ON thumbnail_notes_a
 
 -- Updated_at triggers
 CREATE TRIGGER thumbnail_prompt_templates_updated_at BEFORE UPDATE ON thumbnail_prompt_templates FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+

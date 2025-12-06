@@ -57,3 +57,5 @@ export function PipelineBoard({ ideas }: PipelineBoardProps) {
     </div>
   )
 }
+
+

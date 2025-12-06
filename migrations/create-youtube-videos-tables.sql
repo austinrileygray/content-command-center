@@ -127,3 +127,5 @@ CREATE POLICY "Users can update their own patterns"
 CREATE POLICY "Users can delete their own patterns"
   ON content_patterns FOR DELETE
   USING (auth.uid() = user_id);
+
+

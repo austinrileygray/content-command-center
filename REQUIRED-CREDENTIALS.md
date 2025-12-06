@@ -159,3 +159,5 @@ This document lists all external services that require API keys, OAuth credentia
 - Never commit API keys to version control
 - Use Supabase Vault or similar for sensitive credentials if needed
 - Test all integrations in development before deploying to production
+
+

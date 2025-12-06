@@ -145,3 +145,5 @@ That's it! The app will automatically use the bucket once it exists.
 - [ ] (Optional) Added DELETE policy for users
 
 Once you've checked all these, you're done! 🎉
+
+

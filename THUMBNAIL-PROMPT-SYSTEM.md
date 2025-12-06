@@ -85,3 +85,5 @@ Weekly notes analysis before monthly combination.
 - `POST /api/thumbnails/prompts/approve` - Approve recommendations
 - `GET /api/thumbnails/prompts/versions` - Get version history
 - `POST /api/thumbnails/prompts/revert` - Revert to previous version
+
+
