@@ -129,3 +129,4 @@ CREATE POLICY "Users can delete their own patterns"
   USING (auth.uid() = user_id);
 
 
+

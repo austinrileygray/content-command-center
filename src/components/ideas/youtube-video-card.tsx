@@ -126,3 +126,4 @@ export function YouTubeVideoCard({ idea, thumbnailUrl: providedThumbnail, onEdit
 
 
 
+

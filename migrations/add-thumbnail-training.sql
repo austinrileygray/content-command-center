@@ -33,3 +33,4 @@ CREATE TRIGGER thumbnail_training_updated_at
   EXECUTE FUNCTION update_updated_at();
 
 
+

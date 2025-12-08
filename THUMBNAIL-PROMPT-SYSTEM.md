@@ -87,3 +87,4 @@ Weekly notes analysis before monthly combination.
 - `POST /api/thumbnails/prompts/revert` - Revert to previous version
 
 
+

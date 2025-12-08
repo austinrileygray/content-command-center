@@ -741,3 +741,4 @@ export function IdeaDetailClient({ idea: initialIdea }: IdeaDetailClientProps) {
 }
 
 
+

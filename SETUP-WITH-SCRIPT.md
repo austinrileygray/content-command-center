@@ -50,3 +50,4 @@ If the script doesn't work, use the manual setup in `SETUP-SUPABASE-STORAGE.md`.
 - Check that you have admin access to the project
 
 
+

@@ -20,3 +20,4 @@ TO authenticated
 USING (bucket_id = 'thumbnails' AND (storage.foldername(name))[1] = auth.uid()::text);
 
 
+

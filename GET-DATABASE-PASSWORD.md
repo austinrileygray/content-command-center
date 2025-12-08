@@ -48,3 +48,4 @@ Once you add `SUPABASE_DB_PASSWORD` to `.env.local`, I can:
 **No more manual SQL execution needed!** 🚀
 
 
+

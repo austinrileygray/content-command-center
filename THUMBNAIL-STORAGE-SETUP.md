@@ -102,3 +102,4 @@ thumbnails/
 Notes are stored directly in the `thumbnail_training` table in the `notes` column. They are saved as plain text and used for AI training analysis.
 
 
+

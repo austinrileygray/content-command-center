@@ -530,3 +530,4 @@ export function IdeasPageClient({ initialIdeas }: IdeasPageClientProps) {
 }
 
 
+

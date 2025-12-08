@@ -155,3 +155,4 @@ function generateTemplateIdeas(prompt: string) {
 }
 
 
+

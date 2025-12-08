@@ -693,3 +693,4 @@ export function ThumbnailsClient({ initialIngredients, initialGenerations, initi
     </div>
   )
 }
+

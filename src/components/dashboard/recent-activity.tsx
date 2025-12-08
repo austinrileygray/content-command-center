@@ -37,3 +37,4 @@ export function RecentActivity({ ideas }: RecentActivityProps) {
 }
 
 
+
